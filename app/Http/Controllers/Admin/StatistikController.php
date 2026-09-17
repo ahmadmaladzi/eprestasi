@@ -5,28 +5,60 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Prestasi;
 use App\Models\Siswa;
+use App\Models\TahunAjaran;
+use Illuminate\Http\Request;
 
 class StatistikController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $totalSiswa = Siswa::count();
-        $totalPrestasi = Prestasi::count();
-        $totalBelum = Prestasi::where('status', 'Belum')->count();
-        $totalDisetujui = Prestasi::where('status', 'Disetujui')->count();
-        $totalDitolak = Prestasi::where('status', 'Ditolak')->count();
+        $semuaTahunAjaran = TahunAjaran::orderByDesc('tahun')->get();
 
-        $perKategori = Prestasi::whereNotNull('kategori')
+        // Tentukan tahun ajaran yang sedang dilihat:
+        // - kalau user pilih spesifik lewat query string, pakai itu
+        // - kalau user pilih "semua", jangan filter sama sekali
+        // - kalau belum pilih apa-apa, default ke tahun ajaran yang Aktif
+        $ajaranAktif = TahunAjaran::aktif();
+        $selectedAjaran = null;
+        $tampilkanSemua = false;
+
+        if ($request->filled('tahun_ajaran')) {
+            if ($request->tahun_ajaran === 'semua') {
+                $tampilkanSemua = true;
+            } else {
+                $selectedAjaran = TahunAjaran::find($request->tahun_ajaran);
+            }
+        } else {
+            $selectedAjaran = $ajaranAktif;
+        }
+
+        $prestasiQuery = Prestasi::query();
+        $siswaQuery = Siswa::query();
+
+        if (!$tampilkanSemua && $selectedAjaran) {
+            $prestasiQuery->where('id_ajaran', $selectedAjaran->id_ajaran);
+        }
+
+        $totalSiswa = Siswa::count();
+        $totalPrestasi = (clone $prestasiQuery)->count();
+        $totalBelum = (clone $prestasiQuery)->where('status', 'Belum')->count();
+        $totalDisetujui = (clone $prestasiQuery)->where('status', 'Disetujui')->count();
+        $totalDitolak = (clone $prestasiQuery)->where('status', 'Ditolak')->count();
+
+        $perKategori = (clone $prestasiQuery)->whereNotNull('kategori')
             ->selectRaw('kategori, count(*) as jumlah')
             ->groupBy('kategori')
             ->pluck('jumlah', 'kategori');
 
-        $perTingkat = Prestasi::selectRaw('tingkat, count(*) as jumlah')
+        $perTingkat = (clone $prestasiQuery)->selectRaw('tingkat, count(*) as jumlah')
             ->groupBy('tingkat')
             ->pluck('jumlah', 'tingkat');
 
-        $leaderboard = Siswa::withCount(['prestasi as prestasi_disetujui_count' => function ($q) {
+        $leaderboard = Siswa::withCount(['prestasi as prestasi_disetujui_count' => function ($q) use ($tampilkanSemua, $selectedAjaran) {
             $q->where('status', 'Disetujui');
+            if (!$tampilkanSemua && $selectedAjaran) {
+                $q->where('id_ajaran', $selectedAjaran->id_ajaran);
+            }
         }])
             ->orderByDesc('prestasi_disetujui_count')
             ->take(5)
@@ -34,7 +66,8 @@ class StatistikController extends Controller
 
         return view('admin.dashboard', compact(
             'totalSiswa', 'totalPrestasi', 'totalBelum', 'totalDisetujui', 'totalDitolak',
-            'perKategori', 'perTingkat', 'leaderboard'
+            'perKategori', 'perTingkat', 'leaderboard',
+            'semuaTahunAjaran', 'selectedAjaran', 'tampilkanSemua'
         ));
     }
 }

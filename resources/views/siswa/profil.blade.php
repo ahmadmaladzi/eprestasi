@@ -1,56 +1,93 @@
 <x-app-layout title="Profil Saya">
-    <div class="max-w-2xl bg-white rounded-lg shadow-sm p-6">
-        @if($siswa->qr_code)
-            <div class="mb-6 p-3 bg-blue-50 border border-blue-200 rounded text-sm text-blue-800">
-                Link portofolio publik kamu:
-                <a href="{{ route('public.profil', $siswa->qr_code) }}" target="_blank" class="underline font-medium">
-                    {{ url('/p/' . $siswa->qr_code) }}
+    <div class="max-w-2xl space-y-5">
+        <div class="bg-[#2F6FED]/5 border border-[#2F6FED]/15 rounded-xl px-4 py-3.5 flex items-center gap-3">
+            <svg width="16" height="16" class="shrink-0" viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1" stroke="#2F6FED" stroke-width="1.6"/><rect x="13" y="4" width="7" height="7" rx="1" stroke="#2F6FED" stroke-width="1.6"/><rect x="4" y="13" width="7" height="7" rx="1" stroke="#2F6FED" stroke-width="1.6"/></svg>
+            <p class="text-sm text-[#2F6FED]">Link portofolio publik kamu:
+                <a href="{{ route('public.profil', ['qrCode' => $siswa->qr_code, 'owner' => 1]) }}" target="_blank" class="font-semibold underline hover:text-[#1B4FC4]">
+                    {{ route('public.profil', $siswa->qr_code) }}
                 </a>
-            </div>
-        @else
-            <div class="mb-6 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-800">
-                Lengkapi & simpan profil kamu untuk otomatis membuat QR Code & link portofolio.
-            </div>
-        @endif
+            </p>
+        </div>
 
-        <form method="POST" action="{{ route('siswa.profil.update') }}" enctype="multipart/form-data" class="space-y-4">
-            @csrf
-            @method('PUT')
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Foto Profil</label>
-                <input type="file" name="foto_profil" class="mt-1 block w-full text-sm">
-                @error('foto_profil') <p class="text-red-600 text-sm mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Nama</label>
-                <input type="text" name="nama" value="{{ old('nama', $siswa->nama) }}" class="mt-1 block w-full rounded border-gray-300">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Kelas</label>
-                    <input type="text" name="kelas" value="{{ old('kelas', $siswa->kelas) }}" class="mt-1 block w-full rounded border-gray-300">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Jurusan</label>
-                    <input type="text" name="jurusan" value="{{ old('jurusan', $siswa->jurusan) }}" class="mt-1 block w-full rounded border-gray-300">
+        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div class="p-7 border-b border-slate-100">
+                <div class="flex items-center gap-4">
+                    <div class="relative shrink-0">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[#2F6FED] to-[#1B4FC4] flex items-center justify-center text-white text-xl font-bold">
+                            {{ strtoupper(substr($siswa->nama, 0, 1)) }}
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-slate-900">{{ $siswa->nama }}</h2>
+                        <p class="text-sm text-slate-400">{{ $siswa->kelas }} {{ $siswa->jurusan }} &middot; NIS {{ $siswa->nis }}</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" name="email" value="{{ old('email', $siswa->email) }}" class="mt-1 block w-full rounded border-gray-300">
+            <div class="p-7 bg-slate-50/70 border-b border-slate-100">
+                <div class="flex items-center gap-2 mb-3.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#94A3B8" stroke-width="1.6"/><path d="M8 10V7a4 4 0 118 0v3" stroke="#94A3B8" stroke-width="1.6"/></svg>
+                    <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Data Sekolah &middot; Dikunci Admin</p>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">No. HP</label>
-                    <input type="text" name="no_hp" value="{{ old('no_hp', $siswa->no_hp) }}" class="mt-1 block w-full rounded border-gray-300">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
+                        <input type="text" value="{{ $siswa->nama }}" disabled
+                               class="block w-full rounded-xl border-slate-200 bg-slate-100 text-sm text-slate-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">NIS</label>
+                        <input type="text" value="{{ $siswa->nis }}" disabled
+                               class="block w-full rounded-xl border-slate-200 bg-slate-100 text-sm text-slate-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Kelas</label>
+                        <input type="text" value="{{ $siswa->kelas }}" disabled
+                               class="block w-full rounded-xl border-slate-200 bg-slate-100 text-sm text-slate-500 cursor-not-allowed">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1.5">Jurusan</label>
+                        <input type="text" value="{{ $siswa->jurusan }}" disabled
+                               class="block w-full rounded-xl border-slate-200 bg-slate-100 text-sm text-slate-500 cursor-not-allowed">
+                    </div>
                 </div>
+                <p class="text-xs text-slate-400 mt-3">Data di atas hanya bisa diubah oleh Admin. Hubungi admin sekolah kalau ada kesalahan data.</p>
             </div>
 
-            <button class="bg-slate-800 text-white px-4 py-2 rounded hover:bg-slate-700">Simpan Perubahan</button>
-        </form>
+            <form method="POST" action="{{ route('siswa.profil.update') }}" enctype="multipart/form-data" class="p-7 space-y-5">
+                @csrf
+                @method('PUT')
+
+                <div class="flex items-center gap-2 mb-1">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17L4 12" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <p class="text-xs font-semibold text-[#2F6FED] uppercase tracking-wide">Data Pribadi &middot; Bisa Diedit</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Foto Profil</label>
+                    <input type="file" name="foto"
+                           class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#2F6FED]/10 file:text-[#2F6FED] hover:file:bg-[#2F6FED]/20 transition">
+                    @error('foto') <p class="text-red-600 text-xs mt-1.5">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Email</label>
+                    <input type="email" name="email" value="{{ old('email', $siswa->email) }}"
+                           class="block w-full rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
+                    @error('email') <p class="text-red-600 text-xs mt-1.5">{{ $message }}</p> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">No. HP / WhatsApp</label>
+                    <input type="text" name="no_hp" value="{{ old('no_hp', $siswa->no_hp) }}" placeholder="08xxxxxxxxxx"
+                           class="block w-full rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
+                    @error('no_hp') <p class="text-red-600 text-xs mt-1.5">{{ $message }}</p> @enderror
+                </div>
+
+                <button class="inline-flex items-center gap-2 bg-gradient-to-r from-[#2F6FED] to-[#1B4FC4] text-white px-5 py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition shadow-lg shadow-[#2F6FED]/25">
+                    Simpan Perubahan
+                </button>
+            </form>
+        </div>
     </div>
 </x-app-layout>

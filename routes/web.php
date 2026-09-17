@@ -4,7 +4,9 @@ use App\Http\Controllers\Admin\StatistikController;
 use App\Http\Controllers\Admin\TahunAjaranController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Kesiswaan\ProfilController as KesiswaanProfilController;
+use App\Http\Controllers\Kesiswaan\StatistikController as KesiswaanStatistikController;
 use App\Http\Controllers\Kesiswaan\VerifikasiController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PublicProfilController;
 use App\Http\Controllers\Siswa\DashboardController as SiswaDashboardController;
 use App\Http\Controllers\Siswa\PrestasiController;
@@ -26,6 +28,11 @@ Route::get('/dashboard', function () {
     };
 })->middleware('auth')->name('dashboard');
 
+Route::middleware(['auth'])->group(function () {
+    Route::get('/akun/ganti-password', [PasswordController::class, 'edit'])->name('akunpassword.edit');
+    Route::put('/akun/ganti-password', [PasswordController::class, 'update'])->name('akunpassword.update');
+});
+
 // ==== SISWA ====
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->group(function () {
     Route::get('/dashboard', [SiswaDashboardController::class, 'index'])->name('dashboard');
@@ -39,13 +46,14 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->grou
     Route::get('/portofolio', function () {
         $qrCode = auth()->user()->siswa->qr_code;
         return $qrCode
-            ? redirect()->route('public.profil', $qrCode)
+            ? redirect()->route('public.profil', ['qrCode' => $qrCode, 'owner' => 1])
             : back()->with('error', 'Lengkapi profil kamu dulu untuk membuat portofolio.');
     })->name('portofolio');
 });
 
 // ==== KESISWAAN ====
 Route::middleware(['auth', 'role:kesiswaan'])->prefix('kesiswaan')->name('kesiswaan.')->group(function () {
+    Route::get('/statistik', [KesiswaanStatistikController::class, 'index'])->name('statistik');
     Route::get('/profil', [KesiswaanProfilController::class, 'show'])->name('profil');
     Route::put('/profil', [KesiswaanProfilController::class, 'update'])->name('profil.update');
 
@@ -62,6 +70,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::get('/users/import', [UserController::class, 'importForm'])->name('users.import.form');
+    Route::post('/users/import', [UserController::class, 'import'])->name('users.import');
 
     Route::get('/tahun-ajaran', [TahunAjaranController::class, 'index'])->name('ajaran.index');
     Route::post('/tahun-ajaran', [TahunAjaranController::class, 'store'])->name('ajaran.store');

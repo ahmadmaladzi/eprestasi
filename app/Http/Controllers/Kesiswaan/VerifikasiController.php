@@ -41,6 +41,26 @@ class VerifikasiController extends Controller
             });
         }
 
+        if ($request->filled('tingkat')) {
+            $query->where('tingkat', $request->tingkat);
+        }
+
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+
+        if ($request->filled('asal')) {
+            $query->where('asal', $request->asal);
+        }
+
+        if ($request->filled('jenis_penyelenggara')) {
+            $query->where('jenis_penyelenggara', $request->jenis_penyelenggara);
+        }
+
+        if ($request->filled('puspresnas')) {
+            $query->where('terhubung_puspresnas', $request->puspresnas === 'ya');
+        }
+
         $prestasi = $query->latest('tanggal')->paginate(10)->withQueryString();
         $daftarAjaran = TahunAjaran::orderByDesc('tahun')->get();
 

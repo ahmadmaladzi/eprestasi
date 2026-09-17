@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProfilController extends Controller
 {
@@ -19,30 +19,26 @@ class ProfilController extends Controller
     {
         $siswa = auth()->user()->siswa;
 
+        // PENTING: hanya field data pribadi yang boleh diubah siswa.
+        // nama, nis, kelas, jurusan TIDAK divalidasi/diupdate di sini sama sekali,
+        // supaya walaupun ada yang coba kirim data itu lewat request manual, tetap diabaikan.
         $validated = $request->validate([
-            'nama' => ['required', 'string', 'max:255'],
-            'kelas' => ['required', 'string', 'max:20'],
-            'jurusan' => ['required', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:255'],
+            'email' => ['required', 'email', 'unique:siswa,email,' . $siswa->id_siswa . ',id_siswa'],
             'no_hp' => ['nullable', 'string', 'max:20'],
-            'foto_profil' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:1024'],
+            'foto' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
 
-        if ($request->hasFile('foto_profil')) {
-            $validated['foto_profil'] = $request->file('foto_profil')->store('foto-profil', 'public');
+        if ($request->hasFile('foto')) {
+            if ($siswa->foto) {
+                Storage::disk('public')->delete($siswa->foto);
+            }
+            $validated['foto'] = $request->file('foto')->store('siswa/foto', 'public');
         }
 
-        // qr_code di-generate sekali saat pertama kali isi profil (kalau belum ada)
-        if (!$siswa->qr_code) {
-            $validated['qr_code'] = Str::slug($validated['nama']) . '-' . $siswa->id_siswa;
-        }
-
-        $siswa->update($validated);
-
-        // Sinkronkan nama & email ke tabel users juga
-        $siswa->user->update([
-            'nama' => $validated['nama'],
-            'email' => $validated['email'] ?? $siswa->user->email,
+        $siswa->update([
+            'email' => $validated['email'],
+            'no_hp' => $validated['no_hp'] ?? null,
+            'foto' => $validated['foto'] ?? $siswa->foto,
         ]);
 
         return back()->with('success', 'Profil berhasil diperbarui.');

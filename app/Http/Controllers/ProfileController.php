@@ -2,59 +2,39 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use App\Models\Siswa;
+use Barryvdh\DomPDF\Facade\Pdf;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
-class ProfileController extends Controller
+class PublicProfilController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function show(string $qrCode)
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $siswa = Siswa::where('qr_code', $qrCode)->firstOrFail();
+
+        $prestasi = $siswa->prestasi()
+            ->with(['tahunAjaran', 'sertifikat', 'dokumentasi'])
+            ->where('status', 'Disetujui')
+            ->latest('tanggal')
+            ->get();
+
+        $qrImage = QrCode::size(200)->generate(url("/p/{$qrCode}"));
+
+        return view('public.profil', compact('siswa', 'prestasi', 'qrImage'));
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function generatePdf(string $qrCode)
     {
-        $request->user()->fill($request->validated());
+        $siswa = Siswa::where('qr_code', $qrCode)->firstOrFail();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+        $prestasi = $siswa->prestasi()
+            ->with(['sertifikat', 'dokumentasi'])
+            ->where('status', 'Disetujui')
+            ->latest('tanggal')
+            ->get();
 
-        $request->user()->save();
+        $pdf = Pdf::loadView('public.portofolio-pdf', compact('siswa', 'prestasi'));
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
-
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return $pdf->download('Portofolio-' . $siswa->nama . '.pdf');
     }
 }

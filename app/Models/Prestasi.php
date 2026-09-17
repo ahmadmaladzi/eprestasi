@@ -16,6 +16,7 @@ class Prestasi extends Model
         'id_siswa', 'id_ajaran', 'id_kesiswaan', 'nama_prestasi', 'tanggal',
         'penyelenggara', 'tingkat', 'deskripsi', 'status', 'kategori',
         'catatan', 'tanggal_verifikasi',
+        'terhubung_puspresnas', 'asal', 'jenis_penyelenggara',
     ];
 
     protected function casts(): array
@@ -23,6 +24,7 @@ class Prestasi extends Model
         return [
             'tanggal' => 'date',
             'tanggal_verifikasi' => 'datetime',
+            'terhubung_puspresnas' => 'boolean',
         ];
     }
 

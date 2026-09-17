@@ -84,4 +84,28 @@ class UserController extends Controller
 
         return back()->with('success', 'Akun berhasil dihapus.');
     }
+
+    public function importForm()
+    {
+        return view('admin.users.import');
+    }
+
+    public function import(\Illuminate\Http\Request $request)
+    {
+        $request->validate([
+            'file' => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:5120'],
+        ]);
+
+        $import = new \App\Imports\UserImport();
+        \Maatwebsite\Excel\Facades\Excel::import($import, $request->file('file'));
+
+        $pesan = "{$import->berhasil} akun berhasil diimpor.";
+        if (count($import->gagal) > 0) {
+            $pesan .= ' ' . count($import->gagal) . ' baris gagal (lihat detail di bawah).';
+        }
+
+        return back()
+            ->with($import->berhasil > 0 ? 'success' : 'error', $pesan)
+            ->with('gagalImport', $import->gagal);
+    }
 }

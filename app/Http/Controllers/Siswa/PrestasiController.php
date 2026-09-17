@@ -52,6 +52,9 @@ class PrestasiController extends Controller
             'tanggal' => $request->tanggal,
             'deskripsi' => $request->deskripsi,
             'status' => 'Belum',
+            'asal' => $request->asal ?? 'Dalam Negeri',
+            'jenis_penyelenggara' => $request->jenis_penyelenggara,
+            'terhubung_puspresnas' => $request->boolean('terhubung_puspresnas'),
         ]);
 
         $this->simpanDokumen($request, $prestasi);
@@ -83,7 +86,11 @@ class PrestasiController extends Controller
     {
         $this->authorizeSiswa($prestasi);
 
-        $prestasi->update($request->only(['nama_prestasi', 'penyelenggara', 'tingkat', 'tanggal', 'deskripsi']));
+        $prestasi->update($request->only([
+            'nama_prestasi', 'penyelenggara', 'tingkat', 'tanggal', 'deskripsi',
+            'asal', 'jenis_penyelenggara',
+        ]));
+        $prestasi->update(['terhubung_puspresnas' => $request->boolean('terhubung_puspresnas')]);
 
         $this->simpanDokumen($request, $prestasi);
 
