@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Portofolio - {{ $siswa->nama }}</title>
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('favicon-32.png') }}" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -14,7 +17,7 @@
         <div class="absolute left-1/2 top-0 -translate-x-1/2 w-[500px] h-[300px] bg-[#2F6FED]/20 rounded-full blur-[100px] pointer-events-none"></div>
         <div class="max-w-3xl mx-auto relative">
             <div class="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-full px-3 py-1.5 mb-4">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M4 4H20V17L12 21L4 17V4Z" stroke="white" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 11L11 13L15 9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <x-brand-logo variant="mark" :size="18" tone="light" />
                 <span class="text-xs font-medium text-white/80">Portofolio Terverifikasi Resmi</span>
             </div>
             <h1 class="text-2xl md:text-3xl font-extrabold text-white">{{ $siswa->nama }}</h1>
@@ -54,7 +57,7 @@
             @forelse($prestasi as $item)
                 <div class="bg-white rounded-2xl border border-slate-200 p-5">
                     <div class="flex justify-between items-start gap-4">
-                        <div class="flex gap-3.5">
+                        <div class="flex gap-3.5 min-w-0">
                             <div class="w-9 h-9 rounded-lg bg-[#2F6FED]/10 flex items-center justify-center shrink-0 mt-0.5">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2L14.5 8.5L21 9L16 13.5L17.5 20L12 16.5L6.5 20L8 13.5L3 9L9.5 8.5L12 2Z" fill="#2F6FED"/></svg>
                             </div>
@@ -106,13 +109,16 @@
                     @endif
                 </div>
             @empty
-                <div class="bg-white rounded-2xl border border-slate-200 p-8 text-center">
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 text-center">
                     <p class="text-slate-400 text-sm">Belum ada prestasi yang terverifikasi.</p>
                 </div>
             @endforelse
         </div>
 
-        <p class="text-center text-xs text-slate-400 pb-10">Portofolio ini dibagikan melalui sistem E-Prestasi</p>
+        <div class="flex items-center justify-center gap-2 pb-10 text-xs text-slate-400">
+            <x-brand-logo variant="mark" :size="18" />
+            <span>Portofolio ini dibagikan melalui sistem E-Prestasi</span>
+        </div>
     </div>
 </body>
 </html>

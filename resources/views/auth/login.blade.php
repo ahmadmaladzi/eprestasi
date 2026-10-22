@@ -1,58 +1,86 @@
 <x-guest-layout>
-    <div class="mb-8">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#2F6FED] to-[#1B4FC4] flex items-center justify-center mb-5 shadow-lg shadow-[#2F6FED]/25">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4H20V17L12 21L4 17V4Z" stroke="white" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 11L11 13L15 9" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
-        <h1 class="text-2xl font-extrabold text-slate-900">Masuk ke akun kamu</h1>
-        <p class="text-sm text-slate-500 mt-1.5">Gunakan akun yang telah didaftarkan oleh admin sekolah.</p>
+    <div class="mb-7">
+        <p class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#2F6FED]">Selamat datang kembali</p>
+        <h1 class="mt-2 font-display text-[1.65rem] font-bold leading-tight tracking-tight text-[#0B1E38]">Masuk ke akun kamu</h1>
+        <p class="mt-2 text-[13px] leading-relaxed text-[#64748B]">Gunakan email, NIS, atau NIP yang sudah didaftarkan admin sekolah.</p>
     </div>
 
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+    <form method="POST" action="{{ route('login') }}" class="space-y-5"
+          x-data="{ showPassword: false, loading: false }" @submit="loading = true">
         @csrf
 
         <div>
-            <label for="email" class="block text-xs font-semibold text-slate-600 mb-1.5">{{ __('Email') }}</label>
+            <label for="login" class="field-label">{{ __('Email / NIS / NIP') }}</label>
             <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6H20V18H4V6Z" stroke="#94A3B8" stroke-width="1.6" stroke-linejoin="round"/><path d="M4 6L12 13L20 6" stroke="#94A3B8" stroke-width="1.6" stroke-linejoin="round"/></svg>
-                </div>
-                <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username"
-                       class="block w-full rounded-xl border-slate-200 bg-white pl-10 py-3 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition"
-                       placeholder="nama@sekolah.test">
+                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#94A3B8]">
+                    <x-icon name="user" :size="16" />
+                </span>
+                <input id="login" type="text" name="login" value="{{ old('login') }}" required autofocus autocomplete="username"
+                       aria-invalid="{{ $errors->has('login') ? 'true' : 'false' }}"
+                       class="input py-3 pl-10"
+                       placeholder="nama@sekolah.test / NIS / NIP">
             </div>
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <x-input-error :messages="$errors->get('login')" class="mt-2" />
         </div>
 
         <div>
-            <label for="password" class="block text-xs font-semibold text-slate-600 mb-1.5">{{ __('Password') }}</label>
+            <label for="password" class="field-label">{{ __('Password') }}</label>
             <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#94A3B8" stroke-width="1.6"/><path d="M8 10V7a4 4 0 118 0v3" stroke="#94A3B8" stroke-width="1.6"/></svg>
-                </div>
+                <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-[#94A3B8]">
+                    <x-icon name="lock" :size="16" />
+                </span>
                 <input id="password" type="password" name="password" required autocomplete="current-password"
-                       class="block w-full rounded-xl border-slate-200 bg-white pl-10 py-3 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition"
+                       aria-invalid="{{ $errors->has('password') ? 'true' : 'false' }}"
+                       x-bind:type="showPassword ? 'text' : 'password'"
+                       class="input py-3 pl-10 pr-11"
                        placeholder="••••••••">
+                <button type="button" @click="showPassword = !showPassword"
+                        :aria-label="showPassword ? 'Sembunyikan password' : 'Tampilkan password'"
+                        :aria-pressed="showPassword ? 'true' : 'false'"
+                        class="absolute inset-y-0 right-0 flex w-11 items-center justify-center rounded-r-xl text-[#94A3B8] transition hover:text-[#2F6FED] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#2F6FED]/30">
+                    <x-icon name="eye" :size="16" />
+                </button>
             </div>
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-between">
-            <label class="flex items-center gap-2 cursor-pointer">
-                <input id="remember_me" type="checkbox" class="rounded border-slate-300 text-[#2F6FED] shadow-sm focus:ring-[#2F6FED]/30" name="remember">
-                <span class="text-sm text-slate-600">{{ __('Ingat saya') }}</span>
+        <div class="flex items-center justify-between gap-3">
+            <label class="flex cursor-pointer items-center gap-2">
+                <input id="remember_me" type="checkbox" class="h-4 w-4 rounded border-[#CBD5E1] text-[#2F6FED] shadow-sm focus:ring-[#2F6FED]/30" name="remember">
+                <span class="text-[12.5px] font-medium text-[#64748B]">{{ __('Ingat saya') }}</span>
             </label>
             @if (Route::has('password.request'))
-                <a class="text-sm text-[#2F6FED] hover:text-[#1B4FC4] font-medium" href="{{ route('password.request') }}">
+                <a class="text-[12.5px] font-semibold text-[#2F6FED] transition hover:text-[#1B4FC4]" href="{{ route('password.request') }}">
                     {{ __('Lupa password?') }}
                 </a>
             @endif
         </div>
 
-        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#2F6FED] to-[#1B4FC4] text-white py-3.5 rounded-xl text-sm font-semibold hover:opacity-90 active:scale-[0.99] transition shadow-lg shadow-[#2F6FED]/25">
-            {{ __('Masuk') }}
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button type="submit" :disabled="loading"
+                class="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#1B4FC4] px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#2F6FED]/25 transition hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2F6FED] focus-visible:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70">
+            <span x-show="!loading" class="inline-flex items-center gap-2">
+                {{ __('Masuk') }}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true" class="transition group-hover:translate-x-0.5">
+                    <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+            <span x-show="loading" x-cloak class="inline-flex items-center gap-2">
+                <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5" class="opacity-25"/>
+                    <path d="M21 12a9 9 0 0 1-9 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+                {{ __('Memproses...') }}
+            </span>
         </button>
     </form>
+
+    <div class="mt-6 flex items-start gap-2.5 rounded-xl border border-[#E8EDF5] bg-[#F8FAFC] px-3.5 py-3">
+        <x-icon name="shield" :size="15" class="mt-0.5 shrink-0 text-[#2F6FED]" />
+        <p class="text-[11.5px] leading-relaxed text-[#64748B]">
+            <span class="font-semibold text-[#0B1E38]">Akun dibuat oleh admin sekolah.</span>
+            Siswa dan kesiswaan tidak perlu mendaftar sendiri.
+        </p>
+    </div>
 </x-guest-layout>

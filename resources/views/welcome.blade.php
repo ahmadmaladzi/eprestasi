@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>E-Prestasi — Rekam Jejak Prestasi Siswa</title>
     <meta name="description" content="E-Prestasi membantu siswa mencatat, memverifikasi, dan membagikan prestasi secara digital.">
+    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ asset('favicon-32.png') }}" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
@@ -41,19 +44,8 @@
 <header class="absolute inset-x-0 top-0 z-50">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 pt-5">
         <nav class="flex items-center justify-between rounded-2xl bg-white/90 backdrop-blur-xl border border-slate-200/80 px-4 sm:px-5 py-3 nav-shadow">
-            <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                <span class="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-500 text-white flex items-center justify-center shadow-lg shadow-blue-600/25 group-hover:-translate-y-0.5 transition">
-                    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M8 4h8v3.5c0 3.4-1.8 5.6-4 5.6S8 10.9 8 7.5V4Z" fill="currentColor"/>
-                        <path d="M8 6H4.8v1.3c0 3.1 1.7 5 4.5 5M16 6h3.2v1.3c0 3.1-1.7 5-4.5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                        <path d="M12 13.2V17M8.5 20h7M10 17h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-                    </svg>
-                    <span class="absolute -right-1 -top-1 w-3 h-3 rounded-full bg-emerald-400 border-2 border-white"></span>
-                </span>
-                <span>
-                    <span class="block text-sm font-extrabold tracking-tight text-slate-900">E-Prestasi</span>
-                    <span class="block text-[10px] text-slate-400">Sistem Prestasi Siswa</span>
-                </span>
+            <a href="{{ route('home') }}" class="group flex items-center gap-3">
+                <x-brand-logo :size="40" subtitle="Sistem Prestasi Siswa" subtitle-class="text-slate-400" class="transition group-hover:-translate-y-0.5" />
             </a>
 
             <div class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-500">
@@ -71,7 +63,7 @@
 </header>
 
 <!-- HERO -->
-<section class="hero-bg relative overflow-hidden min-h-[760px] lg:min-h-[790px] pt-32 pb-20">
+<section class="hero-bg relative overflow-hidden sm:min-h-[760px] lg:min-h-[790px] pt-28 sm:pt-32 pb-16 sm:pb-20">
     <div class="absolute inset-0 dot-grid opacity-50 pointer-events-none"></div>
     <div class="absolute -left-28 top-28 w-72 h-72 rounded-full bg-blue-200/25 blur-2xl"></div>
     <div class="absolute right-[-80px] bottom-10 w-96 h-96 rounded-full bg-cyan-100/60 blur-3xl"></div>
@@ -220,7 +212,7 @@
     <div class="relative max-w-7xl mx-auto px-5 sm:px-8 pt-12 pb-6">
         <div class="grid gap-10 md:grid-cols-[1.5fr_.8fr_.8fr]">
             <div class="max-w-md">
-                <p class="text-xl font-extrabold tracking-[-.03em] text-white">E-Prestasi</p>
+                <x-brand-logo :size="42" tone="light" subtitle="Sistem Informasi Prestasi" subtitle-class="text-slate-500" />
                 <p class="mt-3 text-sm leading-6 text-slate-400">
                     Sistem prestasi siswa yang membantu pencatatan pencapaian menjadi lebih rapi, terarah, dan mudah diakses.
                 </p>

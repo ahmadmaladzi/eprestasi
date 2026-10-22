@@ -24,7 +24,12 @@ class UserController extends Controller
 
         $users = $query->latest()->paginate(15)->withQueryString();
 
-        return view('admin.users.index', compact('users'));
+        $totalUser = User::count();
+        $totalSiswa = User::where('role', 'siswa')->count();
+        $totalKesiswaan = User::where('role', 'kesiswaan')->count();
+        $totalAdmin = User::where('role', 'admin')->count();
+
+        return view('admin.users.index', compact('users', 'totalUser', 'totalSiswa', 'totalKesiswaan', 'totalAdmin'));
     }
 
     public function create()
@@ -76,6 +81,57 @@ class UserController extends Controller
         }
 
         return redirect()->route('admin.users.index')->with('success', 'Akun berhasil dibuat.');
+    }
+
+    public function edit(User $user)
+    {
+        $siswa = $user->role === 'siswa' ? Siswa::where('id_user', $user->id)->first() : null;
+        $kesiswaan = $user->role === 'kesiswaan' ? Kesiswaan::where('id_user', $user->id)->first() : null;
+
+        return view('admin.users.edit', compact('user', 'siswa', 'kesiswaan'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'unique:users,email,' . $user->id],
+            'password' => ['nullable', 'string', 'min:8'],
+            'nis' => ['required_if:role,siswa', 'nullable', 'string', 'unique:siswa,nis,' . $user->id . ',id_user'],
+            'kelas' => ['required_if:role,siswa', 'nullable', 'string'],
+            'jurusan' => ['required_if:role,siswa', 'nullable', 'string'],
+            'no_hp' => ['nullable', 'string'],
+            'nip' => ['required_if:role,kesiswaan', 'nullable', 'string', 'unique:kesiswaan,nip,' . $user->id . ',id_user'],
+            'jabatan' => ['nullable', 'string'],
+        ]);
+
+        $user->nama = $validated['nama'];
+        $user->email = $validated['email'];
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+        $user->save();
+
+        if ($user->role === 'siswa') {
+            Siswa::where('id_user', $user->id)->update([
+                'nama' => $validated['nama'],
+                'nis' => $validated['nis'],
+                'kelas' => $validated['kelas'],
+                'jurusan' => $validated['jurusan'],
+                'email' => $validated['email'],
+                'no_hp' => $validated['no_hp'] ?? null,
+            ]);
+        } elseif ($user->role === 'kesiswaan') {
+            Kesiswaan::where('id_user', $user->id)->update([
+                'nama' => $validated['nama'],
+                'nip' => $validated['nip'],
+                'jabatan' => $validated['jabatan'] ?? null,
+                'no_hp' => $validated['no_hp'] ?? null,
+                'email' => $validated['email'],
+            ]);
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'Data akun berhasil diperbarui.');
     }
 
     public function destroy(User $user)

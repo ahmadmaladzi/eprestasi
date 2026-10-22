@@ -1,75 +1,125 @@
 <x-app-layout title="Kelola Akun Pengguna">
-    <div class="flex justify-between items-center mb-5 flex-wrap gap-3">
-        <form method="GET" class="flex gap-2.5 flex-wrap">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama..."
-                   class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-            <select name="role" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                <option value="">Semua Role</option>
-                <option value="siswa" {{ request('role') == 'siswa' ? 'selected' : '' }}>Siswa</option>
-                <option value="kesiswaan" {{ request('role') == 'kesiswaan' ? 'selected' : '' }}>Kesiswaan</option>
-                <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-            </select>
-            <button class="bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 transition">Filter</button>
-        </form>
-        <div class="flex gap-2.5">
-            <a href="{{ route('admin.users.import.form') }}"
-               class="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-600 px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-slate-50 transition">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 15V3M12 3L8 7M12 3L16 7" stroke="#2F6FED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 17V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V17" stroke="#2F6FED" stroke-width="2" stroke-linecap="round"/></svg>
-                Import Excel
-            </a>
-            <a href="{{ route('admin.users.create') }}"
-               class="inline-flex items-center gap-2 bg-gradient-to-r from-[#2F6FED] to-[#1B4FC4] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition shadow-lg shadow-[#2F6FED]/25">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 5V19M5 12H19" stroke="white" stroke-width="2.2" stroke-linecap="round"/></svg>
-                Tambah User
-            </a>
-        </div>
-    </div>
+    <div class="space-y-4">
 
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-left text-slate-500">
-                <tr>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Nama</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Email</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Role</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-                @forelse($users as $user)
-                    <tr class="hover:bg-slate-50/60 transition">
-                        <td class="px-5 py-4">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-7 h-7 rounded-full bg-[#0B1E38] text-white flex items-center justify-center text-[10px] font-semibold shrink-0">
-                                    {{ strtoupper(substr($user->nama, 0, 1)) }}
-                                </div>
-                                <span class="font-medium text-slate-800">{{ $user->nama }}</span>
-                            </div>
-                        </td>
-                        <td class="px-5 py-4 text-slate-600">{{ $user->email }}</td>
-                        <td class="px-5 py-4">
+        {{-- RINGKASAN --}}
+        <div class="grid grid-cols-2 gap-3 xl:grid-cols-4">
+            <x-ui.stat-card label="Total Akun" :value="$totalUser" icon="users" hint="semua role" tone="bg-[#EEF4FF] text-[#2F6FED]" />
+            <x-ui.stat-card label="Siswa" :value="$totalSiswa" icon="graduation" hint="akun siswa aktif" tone="bg-[#ECFDF5] text-[#16A34A]" />
+            <x-ui.stat-card label="Kesiswaan" :value="$totalKesiswaan" icon="clipboard" hint="verifikator prestasi" tone="bg-[#FFF7ED] text-[#F97316]" />
+            <x-ui.stat-card label="Admin" :value="$totalAdmin" icon="shield" hint="pengelola sistem" tone="bg-[#F5F3FF] text-[#8B5CF6]" />
+        </div>
+
+        <section class="overflow-hidden rounded-2xl border border-[#E8EDF5] bg-white">
+            {{-- TOOLBAR --}}
+            <div class="flex flex-col gap-3 border-b border-[#E8EDF5] p-4 lg:flex-row lg:items-center lg:justify-between">
+                <form method="GET" class="flex flex-wrap items-center gap-2">
+                    <div class="relative w-full sm:w-60">
+                        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]">
+                            <x-icon name="search" :size="15" />
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email..."
+                               class="w-full rounded-xl border-[#E2E8F0] py-2 pl-9 pr-3 text-[13px] text-[#0B1E38] placeholder:text-[#94A3B8] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                    </div>
+                    <select name="role"
+                            class="rounded-xl border-[#E2E8F0] py-2 pl-3 pr-8 text-[13px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Semua Role</option>
+                        <option value="siswa" @selected(request('role') === 'siswa')>Siswa</option>
+                        <option value="kesiswaan" @selected(request('role') === 'kesiswaan')>Kesiswaan</option>
+                        <option value="admin" @selected(request('role') === 'admin')>Admin</option>
+                    </select>
+                    <button class="inline-flex items-center gap-1.5 rounded-xl bg-[#2F6FED] px-3.5 py-2 text-[13px] font-semibold text-white transition hover:bg-[#1B4FC4]">
+                        <x-icon name="filter" :size="14" />
+                        Filter
+                    </button>
+                    @if(request()->hasAny(['search', 'role']))
+                        <a href="{{ route('admin.users.index') }}" class="text-[12px] font-medium text-[#94A3B8] transition hover:text-[#475569]">Reset</a>
+                    @endif
+                </form>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <a href="{{ route('admin.users.import.form') }}"
+                       class="inline-flex items-center gap-2 rounded-xl border border-[#E8EDF5] bg-white px-3.5 py-2 text-[13px] font-semibold text-[#475569] transition hover:bg-[#F8FAFC]">
+                        <x-icon name="upload" :size="14" class="text-[#2F6FED]" />
+                        Import Excel
+                    </a>
+                    <a href="{{ route('admin.users.create') }}"
+                       class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#1B4FC4] px-4 py-2 text-[13px] font-semibold text-white shadow-lg shadow-[#2F6FED]/20 transition hover:opacity-90">
+                        <x-icon name="plus" :size="14" />
+                        Tambah User
+                    </a>
+                </div>
+            </div>
+
+            {{-- TABLE HEADER --}}
+            <div class="flex items-center justify-between gap-3 px-5 py-3.5">
+                <div>
+                    <h2 class="font-display text-sm font-semibold text-[#0B1E38]">Daftar Pengguna</h2>
+                    <p class="mt-0.5 text-[11px] text-[#94A3B8]">Kelola akses akun siswa, kesiswaan, dan admin.</p>
+                </div>
+                <span class="shrink-0 rounded-full bg-[#F5F7FB] px-2.5 py-1 text-[10.5px] font-semibold text-[#64748B]">{{ $users->total() }} akun</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[680px] text-sm">
+                    <thead class="border-y border-[#E8EDF5] bg-[#F8FAFC] text-left">
+                        <tr>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Nama</th>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Email</th>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Role</th>
+                            <th class="px-5 py-3 text-right text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#F1F5F9]">
+                        @forelse($users as $user)
                             @php
                                 $roleBadge = match($user->role) {
-                                    'admin' => 'bg-[#0B1E38]/10 text-[#0B1E38]',
-                                    'kesiswaan' => 'bg-[#F59E0B]/10 text-[#D97706]',
-                                    default => 'bg-[#2F6FED]/10 text-[#2F6FED]',
+                                    'admin' => 'bg-[#F1F5F9] text-[#0B1E38]',
+                                    'kesiswaan' => 'bg-[#FFF7ED] text-[#C2410C]',
+                                    default => 'bg-[#EEF4FF] text-[#1B4FC4]',
                                 };
                             @endphp
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold capitalize {{ $roleBadge }}">{{ $user->role }}</span>
-                        </td>
-                        <td class="px-5 py-4">
-                            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Yakin hapus user ini?')">
-                                @csrf @method('DELETE')
-                                <button class="text-red-600 hover:text-red-700 font-medium text-xs">Hapus</button>
-                            </form>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="4" class="px-5 py-14 text-center text-sm text-slate-400">Belum ada user.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                            <tr class="transition hover:bg-[#F8FAFC]">
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center gap-3">
+                                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2F6FED] to-[#1B4FC4] text-[10px] font-semibold text-white">
+                                            {{ strtoupper(substr($user->nama, 0, 1)) }}
+                                        </span>
+                                        <span class="font-medium text-[#0B1E38]">{{ $user->nama }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-3 text-[13px] text-[#64748B]">{{ $user->email }}</td>
+                                <td class="px-5 py-3">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10.5px] font-semibold capitalize {{ $roleBadge }}">{{ $user->role }}</span>
+                                </td>
+                                <td class="px-5 py-3">
+                                    <div class="flex items-center justify-end gap-1.5">
+                                        <a href="{{ route('admin.users.edit', $user) }}" title="Edit pengguna"
+                                           class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#64748B] transition hover:border-[#2F6FED]/30 hover:bg-[#EEF4FF] hover:text-[#2F6FED]">
+                                            <x-icon name="edit" :size="14" />
+                                        </a>
+                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Yakin hapus user ini?')">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" title="Hapus pengguna"
+                                                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#94A3B8] transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">
+                                                <x-icon name="trash" :size="14" />
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4">
+                                    <x-ui.empty-state icon="users" title="Belum ada pengguna"
+                                                      description="Tambahkan akun baru atau import dari file Excel untuk memulai." />
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <div class="mt-4">{{ $users->links() }}</div>
+        <div>{{ $users->links() }}</div>
+    </div>
 </x-app-layout>

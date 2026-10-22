@@ -1,104 +1,186 @@
 <x-app-layout title="Verifikasi Prestasi">
-    <form method="GET" class="mb-5 space-y-2.5">
-        <div class="flex flex-wrap gap-2.5">
-            <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama siswa/prestasi..."
-                   class="rounded-xl border-slate-200 text-sm flex-1 min-w-[200px] shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-            <select name="tahun_ajaran" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                @foreach($daftarAjaran as $ajaran)
-                    <option value="{{ $ajaran->id_ajaran }}" {{ (string) request('tahun_ajaran', optional($daftarAjaran->firstWhere('status', 'Aktif'))->id_ajaran) === (string) $ajaran->id_ajaran ? 'selected' : '' }}>
-                        {{ $ajaran->tahun }}{{ $ajaran->status === 'Aktif' ? ' (Aktif)' : '' }}
-                    </option>
-                @endforeach
-                <option value="semua" {{ request('tahun_ajaran') == 'semua' ? 'selected' : '' }}>Semua Tahun</option>
-            </select>
-            <select name="status" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                <option value="">Semua Status</option>
-                <option value="Belum" {{ request('status') == 'Belum' ? 'selected' : '' }}>Belum</option>
-                <option value="Disetujui" {{ request('status') == 'Disetujui' ? 'selected' : '' }}>Disetujui</option>
-                <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-            </select>
-        </div>
-        <div class="flex flex-wrap gap-2.5">
-            <select name="tingkat" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                <option value="">Semua Tingkat</option>
-                @foreach(['Sekolah','Kabupaten/Kota','Provinsi','Nasional','Internasional'] as $t)
-                    <option value="{{ $t }}" {{ request('tingkat') == $t ? 'selected' : '' }}>{{ $t }}</option>
-                @endforeach
-            </select>
-            <select name="kategori" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                <option value="">Semua Kategori</option>
-                @foreach(['Akademik','Non Akademik','Kejuaraan'] as $k)
-                    <option value="{{ $k }}" {{ request('kategori') == $k ? 'selected' : '' }}>{{ $k }}</option>
-                @endforeach
-            </select>
-            <select name="asal" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                <option value="">Dalam/Luar Negeri</option>
-                <option value="Dalam Negeri" {{ request('asal') == 'Dalam Negeri' ? 'selected' : '' }}>Dalam Negeri</option>
-                <option value="Luar Negeri" {{ request('asal') == 'Luar Negeri' ? 'selected' : '' }}>Luar Negeri</option>
-            </select>
-            <select name="jenis_penyelenggara" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                <option value="">Kementerian/Swasta</option>
-                <option value="Kementerian" {{ request('jenis_penyelenggara') == 'Kementerian' ? 'selected' : '' }}>Kementerian</option>
-                <option value="Non Kementerian" {{ request('jenis_penyelenggara') == 'Non Kementerian' ? 'selected' : '' }}>Non Kementerian (Swasta)</option>
-            </select>
-            <select name="puspresnas" class="rounded-xl border-slate-200 text-sm shadow-sm focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 transition">
-                <option value="">Status Puspresnas</option>
-                <option value="ya" {{ request('puspresnas') == 'ya' ? 'selected' : '' }}>Terhubung Puspresnas</option>
-                <option value="tidak" {{ request('puspresnas') == 'tidak' ? 'selected' : '' }}>Tidak Terhubung</option>
-            </select>
-            <button class="bg-gradient-to-r from-[#2F6FED] to-[#1B4FC4] text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition shadow-lg shadow-[#2F6FED]/25">Terapkan Filter</button>
-            <a href="{{ route('kesiswaan.prestasi.index') }}" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:bg-slate-50 transition">Reset</a>
-        </div>
-    </form>
+    @php
+        $statusAktif = request('status', '');
+        $filterAktif = request()->hasAny(['search', 'tahun_ajaran', 'status', 'tingkat', 'kategori', 'asal', 'jenis_penyelenggara', 'puspresnas', 'sort']);
+    @endphp
 
-    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-slate-50 text-left text-slate-500">
-                <tr>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Siswa</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Prestasi</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Tingkat</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Tahun Ajaran</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Tanggal</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Status</th>
-                    <th class="px-5 py-3.5 font-semibold text-xs uppercase tracking-wide">Aksi</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-                @forelse($prestasi as $item)
-                    <tr class="hover:bg-slate-50/60 transition">
-                        <td class="px-5 py-4">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-7 h-7 rounded-full bg-[#0B1E38] text-white flex items-center justify-center text-[10px] font-semibold shrink-0">
-                                    {{ strtoupper(substr($item->siswa->nama, 0, 1)) }}
-                                </div>
-                                <span class="text-slate-700">{{ $item->siswa->nama }}</span>
-                            </div>
-                        </td>
-                        <td class="px-5 py-4 font-medium text-slate-800">{{ $item->nama_prestasi }}</td>
-                        <td class="px-5 py-4 text-slate-600">{{ $item->tingkat }}</td>
-                        <td class="px-5 py-4 text-slate-600">{{ $item->tahunAjaran->tahun }}</td>
-                        <td class="px-5 py-4 text-slate-600">{{ $item->tanggal->format('d M Y') }}</td>
-                        <td class="px-5 py-4">
+    <div class="space-y-4">
+
+        {{-- RINGKASAN --}}
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            @foreach([
+                ['Belum', 'Menunggu Verifikasi', $totalMenunggu, 'clock', 'bg-[#FFF7ED] text-[#F97316]', 'border-[#F59E0B]/40 ring-1 ring-[#F59E0B]/20'],
+                ['Disetujui', 'Disetujui', $totalDisetujui, 'check', 'bg-[#ECFDF5] text-[#16A34A]', 'border-[#22C55E]/40 ring-1 ring-[#22C55E]/20'],
+                ['Ditolak', 'Ditolak / Revisi', $totalDitolak, 'x', 'bg-red-50 text-red-500', 'border-red-300 ring-1 ring-red-200'],
+            ] as [$status, $label, $jumlah, $icon, $tone, $activeRing])
+                <a href="{{ route('kesiswaan.prestasi.index', array_merge(request()->except('status'), ['status' => $status])) }}"
+                   class="rounded-2xl border bg-white p-4 transition hover:shadow-sm sm:p-5 {{ $statusAktif === $status ? $activeRing : 'border-[#E8EDF5] hover:border-[#2F6FED]/30' }}">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">{{ $label }}</p>
+                            <p class="mt-1.5 font-display text-2xl font-bold leading-none tabular-nums {{ $status === 'Ditolak' ? 'text-red-600' : ($status === 'Disetujui' ? 'text-[#15803D]' : 'text-[#B45309]') }}">{{ $jumlah }}</p>
+                            <p class="mt-1.5 text-[10.5px] text-[#94A3B8]">{{ $statusAktif === $status ? 'Filter aktif — klik untuk semua' : 'Klik untuk memfilter' }}</p>
+                        </div>
+                        <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl {{ $tone }}">
+                            <x-icon :name="$icon" :size="16" />
+                        </span>
+                    </div>
+                </a>
+            @endforeach
+        </div>
+
+        {{-- FILTER --}}
+        <section class="card p-4">
+            <form method="GET" class="space-y-3">
+                <div class="flex flex-col gap-2 sm:flex-row">
+                    <div class="relative flex-1">
+                        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#94A3B8]">
+                            <x-icon name="search" :size="15" />
+                        </span>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama siswa atau prestasi..."
+                               class="w-full rounded-xl border-[#E2E8F0] py-2 pl-9 pr-3 text-[13px] text-[#0B1E38] placeholder:text-[#94A3B8] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                    </div>
+                    <select name="tahun_ajaran" class="rounded-xl border-[#E2E8F0] py-2 pl-3 pr-8 text-[13px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 sm:w-48">
+                        @foreach($daftarAjaran as $ajaran)
+                            <option value="{{ $ajaran->id_ajaran }}" @selected((string) request('tahun_ajaran', optional($daftarAjaran->firstWhere('status', 'Aktif'))->id_ajaran) === (string) $ajaran->id_ajaran)>
+                                {{ $ajaran->tahun }}{{ $ajaran->status === 'Aktif' ? ' (Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                        <option value="semua" @selected(request('tahun_ajaran') === 'semua')>Semua Tahun</option>
+                    </select>
+                    <select name="status" class="rounded-xl border-[#E2E8F0] py-2 pl-3 pr-8 text-[13px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 sm:w-40">
+                        <option value="">Semua Status</option>
+                        <option value="Belum" @selected(request('status') === 'Belum')>Menunggu</option>
+                        <option value="Disetujui" @selected(request('status') === 'Disetujui')>Disetujui</option>
+                        <option value="Ditolak" @selected(request('status') === 'Ditolak')>Ditolak / Revisi</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 border-t border-[#E8EDF5] pt-3">
+                    <select name="tingkat" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Semua Tingkat</option>
+                        @foreach(['Sekolah','Kabupaten/Kota','Provinsi','Nasional','Internasional'] as $t)
+                            <option value="{{ $t }}" @selected(request('tingkat') === $t)>{{ $t }}</option>
+                        @endforeach
+                    </select>
+                    <select name="kategori" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Semua Kategori</option>
+                        @foreach(['Akademik','Non Akademik','Kejuaraan'] as $k)
+                            <option value="{{ $k }}" @selected(request('kategori') === $k)>{{ $k }}</option>
+                        @endforeach
+                    </select>
+                    <select name="asal" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Dalam/Luar Negeri</option>
+                        <option value="Dalam Negeri" @selected(request('asal') === 'Dalam Negeri')>Dalam Negeri</option>
+                        <option value="Luar Negeri" @selected(request('asal') === 'Luar Negeri')>Luar Negeri</option>
+                    </select>
+                    <select name="jenis_penyelenggara" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Kementerian/Swasta</option>
+                        <option value="Kementerian" @selected(request('jenis_penyelenggara') === 'Kementerian')>Kementerian</option>
+                        <option value="Non Kementerian" @selected(request('jenis_penyelenggara') === 'Non Kementerian')>Non Kementerian</option>
+                    </select>
+                    <select name="puspresnas" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Status Puspresnas</option>
+                        <option value="ya" @selected(request('puspresnas') === 'ya')>Terhubung</option>
+                        <option value="tidak" @selected(request('puspresnas') === 'tidak')>Tidak Terhubung</option>
+                    </select>
+                    <select name="sort" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="terbaru" @selected(request('sort', 'terbaru') === 'terbaru')>Terbaru</option>
+                        <option value="terlama" @selected(request('sort') === 'terlama')>Terlama</option>
+                        <option value="nama_az" @selected(request('sort') === 'nama_az')>Prestasi A-Z</option>
+                        <option value="nama_za" @selected(request('sort') === 'nama_za')>Prestasi Z-A</option>
+                        <option value="siswa_az" @selected(request('sort') === 'siswa_az')>Siswa A-Z</option>
+                    </select>
+
+                    <div class="ml-auto flex items-center gap-2">
+                        @if($filterAktif)
+                            <a href="{{ route('kesiswaan.prestasi.index') }}" class="text-[12px] font-medium text-[#94A3B8] transition hover:text-[#475569]">Reset</a>
+                        @endif
+                        <button class="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#2F6FED] to-[#1B4FC4] px-3.5 py-2 text-[12.5px] font-semibold text-white shadow-lg shadow-[#2F6FED]/20 transition hover:opacity-90">
+                            <x-icon name="filter" :size="13" />
+                            Terapkan
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        {{-- TABEL --}}
+        <section class="card overflow-hidden">
+            <div class="flex items-center justify-between gap-3 px-5 py-3.5">
+                <div>
+                    <h2 class="font-display text-sm font-semibold text-[#0B1E38]">Daftar Pengajuan</h2>
+                    <p class="mt-0.5 text-[11px] text-[#94A3B8]">Klik detail untuk memeriksa berkas dan memberi keputusan.</p>
+                </div>
+                <span class="shrink-0 rounded-full bg-[#F5F7FB] px-2.5 py-1 text-[10.5px] font-semibold text-[#64748B]">{{ $prestasi->total() }} data</span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[860px] text-sm">
+                    <thead class="border-y border-[#E8EDF5] bg-[#F8FAFC] text-left">
+                        <tr>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Siswa</th>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Prestasi</th>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Tingkat</th>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Tahun</th>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Tanggal</th>
+                            <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Status</th>
+                            <th class="px-5 py-3 text-right text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#F1F5F9]">
+                        @forelse($prestasi as $item)
                             @php
-                                $badge = match($item->status) {
-                                    'Disetujui' => 'bg-[#22C55E]/10 text-[#16A34A]',
-                                    'Ditolak' => 'bg-red-50 text-red-600',
-                                    default => 'bg-[#F59E0B]/10 text-[#D97706]',
+                                $badge = match(true) {
+                                    $item->status === 'Disetujui' => 'bg-[#ECFDF5] text-[#15803D]',
+                                    $item->status === 'Ditolak' && $item->perlu_revisi => 'bg-[#FFF7ED] text-[#B45309]',
+                                    $item->status === 'Ditolak' => 'bg-red-50 text-red-600',
+                                    default => 'bg-[#FFF7ED] text-[#B45309]',
                                 };
                             @endphp
-                            <span class="px-2.5 py-1 rounded-full text-xs font-semibold {{ $badge }}">{{ $item->status }}</span>
-                        </td>
-                        <td class="px-5 py-4">
-                            <a href="{{ route('kesiswaan.prestasi.show', $item) }}" class="text-[#2F6FED] hover:text-[#1B4FC4] font-medium text-xs">Lihat Detail →</a>
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="7" class="px-5 py-14 text-center text-sm text-slate-400">Tidak ada prestasi untuk filter ini.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+                            <tr class="transition hover:bg-[#F8FAFC]">
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0B1E38] text-[10px] font-semibold text-white">
+                                            {{ strtoupper(substr($item->siswa->nama, 0, 1)) }}
+                                        </span>
+                                        <div class="min-w-0">
+                                            <p class="truncate font-medium text-[#0B1E38]">{{ $item->siswa->nama }}</p>
+                                            <p class="truncate text-[10.5px] text-[#94A3B8]">{{ $item->siswa->kelas }} {{ $item->siswa->jurusan }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-5 py-3.5">
+                                    <p class="max-w-[220px] truncate font-medium text-[#0B1E38]">{{ $item->nama_prestasi }}</p>
+                                    <p class="text-[10.5px] text-[#94A3B8]">{{ $item->penyelenggara }}</p>
+                                </td>
+                                <td class="px-5 py-3.5 text-[13px] text-[#64748B]">{{ $item->tingkat }}</td>
+                                <td class="px-5 py-3.5 text-[13px] text-[#64748B]">{{ $item->tahunAjaran->tahun }}</td>
+                                <td class="px-5 py-3.5 text-[13px] text-[#64748B]">{{ $item->tanggal->format('d M Y') }}</td>
+                                <td class="px-5 py-3.5">
+                                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10.5px] font-semibold {{ $badge }}">{{ $item->label_status }}</span>
+                                </td>
+                                <td class="px-5 py-3.5 text-right">
+                                    <a href="{{ route('kesiswaan.prestasi.show', $item) }}"
+                                       class="inline-flex items-center gap-1.5 rounded-lg border border-[#E8EDF5] px-2.5 py-1.5 text-[11px] font-semibold text-[#2F6FED] transition hover:border-[#2F6FED]/30 hover:bg-[#EEF4FF]">
+                                        Detail
+                                        <x-icon name="chevron-right" :size="11" />
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7">
+                                    <x-ui.empty-state icon="clipboard" title="Tidak ada pengajuan"
+                                                      description="Belum ada prestasi yang cocok dengan filter saat ini." />
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-    <div class="mt-4">{{ $prestasi->links() }}</div>
+        <div>{{ $prestasi->links() }}</div>
+    </div>
 </x-app-layout>

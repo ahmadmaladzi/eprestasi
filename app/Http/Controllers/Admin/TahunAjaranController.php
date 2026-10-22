@@ -8,11 +8,25 @@ use Illuminate\Http\Request;
 
 class TahunAjaranController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $daftarAjaran = TahunAjaran::latest()->paginate(10);
+        $query = TahunAjaran::query();
 
-        return view('admin.ajaran.index', compact('daftarAjaran'));
+        if ($request->filled('search')) {
+            $query->where('tahun', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $daftarAjaran = $query->latest()->paginate(10)->withQueryString();
+
+        $totalAjaran = TahunAjaran::count();
+        $totalAktif = TahunAjaran::where('status', 'Aktif')->count();
+        $totalPrestasiKeseluruhan = TahunAjaran::withCount('prestasi')->get()->sum('prestasi_count');
+
+        return view('admin.ajaran.index', compact('daftarAjaran', 'totalAjaran', 'totalAktif', 'totalPrestasiKeseluruhan'));
     }
 
     public function store(Request $request)

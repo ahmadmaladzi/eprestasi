@@ -21,9 +21,10 @@ class PasswordController extends Controller
             'password' => ['required', Password::min(8), 'confirmed'],
         ]);
 
+        // Kembali ke halaman asal form (bisa halaman Ganti Password milik
+        // kesiswaan/admin, atau tab "Keamanan Akun" di halaman Profil siswa).
         if ($validator->fails()) {
-            return redirect()
-                ->route('akunpassword.edit')
+            return back()
                 ->withErrors($validator)
                 ->withInput();
         }
@@ -32,8 +33,6 @@ class PasswordController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        return redirect()
-            ->route('akunpassword.edit')
-            ->with('success', 'Password berhasil diubah.');
+        return back()->with('success', 'Password berhasil diubah.');
     }
 }

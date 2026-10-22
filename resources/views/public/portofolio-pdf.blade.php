@@ -20,9 +20,25 @@
         .file-box { width: 100px; height: 75px; border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; display: block; }
         .file-name { font-size: 8.5px; color: #64748b; width: 100px; margin-top: 2px; word-wrap: break-word; }
         .empty-note { color: #94a3b8; font-size: 10.5px; }
+        .brand-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        .brand-table td { border: none; padding: 0; vertical-align: middle; }
+        .brand-title { font-size: 18px; font-weight: bold; color: #0B1E38; }
+        .brand-sub { color: #64748b; font-size: 9px; margin-top: 2px; }
     </style>
 </head>
 <body>
+    <table class="brand-table">
+        <tr>
+            <td style="width: 48px;">
+                <img src="{{ public_path('images/logo-eprestasi.png') }}" style="width: 44px; height: 44px;" alt="E-Prestasi">
+            </td>
+            <td style="padding-left: 10px;">
+                <div class="brand-title">E-Prestasi</div>
+                <div class="brand-sub">Sistem Informasi Prestasi Siswa</div>
+            </td>
+        </tr>
+    </table>
+
     <h1>Portofolio Prestasi</h1>
     <p class="sub">{{ $siswa->nama }} &middot; {{ $siswa->nis }} &middot; {{ $siswa->kelas }} {{ $siswa->jurusan }}</p>
 

@@ -28,10 +28,16 @@ class StatistikController extends Controller
             $selectedAjaran = $ajaranAktif;
         }
 
+        $jurusanDipilih = $request->get('jurusan');
+
         $prestasiQuery = Prestasi::query();
 
         if (!$tampilkanSemua && $selectedAjaran) {
             $prestasiQuery->where('id_ajaran', $selectedAjaran->id_ajaran);
+        }
+
+        if ($jurusanDipilih) {
+            $prestasiQuery->whereHas('siswa', fn ($q) => $q->where('jurusan', $jurusanDipilih));
         }
 
         $totalPrestasi = (clone $prestasiQuery)->count();
@@ -54,14 +60,24 @@ class StatistikController extends Controller
                 $q->where('id_ajaran', $selectedAjaran->id_ajaran);
             }
         }])
+            ->when($jurusanDipilih, fn ($q) => $q->where('jurusan', $jurusanDipilih))
+            ->having('prestasi_disetujui_count', '>', 0)
             ->orderByDesc('prestasi_disetujui_count')
-            ->take(5)
+            ->take(10)
             ->get();
+
+        // Dropdown jurusan: diambil dari jurusan-jurusan yang beneran ada datanya
+        $daftarJurusan = Siswa::whereNotNull('jurusan')
+            ->select('jurusan')
+            ->distinct()
+            ->orderBy('jurusan')
+            ->pluck('jurusan');
 
         return view('kesiswaan.statistik', compact(
             'totalPrestasi', 'totalBelum', 'totalDisetujui', 'totalDitolak',
             'perKategori', 'perTingkat', 'leaderboard',
-            'semuaTahunAjaran', 'selectedAjaran', 'tampilkanSemua'
+            'semuaTahunAjaran', 'selectedAjaran', 'tampilkanSemua',
+            'daftarJurusan', 'jurusanDipilih'
         ));
     }
 }

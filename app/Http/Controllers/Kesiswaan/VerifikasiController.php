@@ -17,19 +17,18 @@ class VerifikasiController extends Controller
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         } else {
-            // default: tampilkan yang belum diproses dulu
             $query->orderByRaw("FIELD(status, 'Belum', 'Ditolak', 'Disetujui')");
         }
 
-        // Filter by tahun ajaran. Default: tahun ajaran yang sedang Aktif,
-        // supaya kesiswaan nggak ke-mix lihat data dari tahun-tahun lama.
-        // Pilih "Semua Tahun" (value kosong khusus) untuk lihat semuanya.
+        $ajaranUntukKartu = null;
         if ($request->has('tahun_ajaran') && $request->tahun_ajaran !== 'semua') {
             $query->where('id_ajaran', $request->tahun_ajaran);
+            $ajaranUntukKartu = $request->tahun_ajaran;
         } elseif (!$request->has('tahun_ajaran')) {
             $ajaranAktif = TahunAjaran::aktif();
             if ($ajaranAktif) {
                 $query->where('id_ajaran', $ajaranAktif->id_ajaran);
+                $ajaranUntukKartu = $ajaranAktif->id_ajaran;
             }
         }
 
@@ -61,10 +60,43 @@ class VerifikasiController extends Controller
             $query->where('terhubung_puspresnas', $request->puspresnas === 'ya');
         }
 
-        $prestasi = $query->latest('tanggal')->paginate(10)->withQueryString();
+        switch ($request->get('sort', 'terbaru')) {
+            case 'terlama':
+                $query->orderBy('tanggal', 'asc');
+                break;
+            case 'nama_az':
+                $query->orderBy('nama_prestasi', 'asc');
+                break;
+            case 'nama_za':
+                $query->orderBy('nama_prestasi', 'desc');
+                break;
+            case 'siswa_az':
+                $query->join('siswa', 'prestasi.id_siswa', '=', 'siswa.id_siswa')
+                      ->orderBy('siswa.nama', 'asc')
+                      ->select('prestasi.*');
+                break;
+            case 'terbaru':
+            default:
+                if ($request->filled('status')) {
+                    $query->orderBy('tanggal', 'desc');
+                }
+                break;
+        }
+
+        $prestasi = $query->paginate(10)->withQueryString();
         $daftarAjaran = TahunAjaran::orderByDesc('tahun')->get();
 
-        return view('kesiswaan.prestasi.index', compact('prestasi', 'daftarAjaran'));
+        $kartuQuery = Prestasi::query();
+        if ($ajaranUntukKartu) {
+            $kartuQuery->where('id_ajaran', $ajaranUntukKartu);
+        }
+        $totalMenunggu = (clone $kartuQuery)->where('status', 'Belum')->count();
+        $totalDisetujui = (clone $kartuQuery)->where('status', 'Disetujui')->count();
+        $totalDitolak = (clone $kartuQuery)->where('status', 'Ditolak')->count();
+
+        return view('kesiswaan.prestasi.index', compact(
+            'prestasi', 'daftarAjaran', 'totalMenunggu', 'totalDisetujui', 'totalDitolak'
+        ));
     }
 
     public function show(Prestasi $prestasi)
@@ -76,15 +108,25 @@ class VerifikasiController extends Controller
 
     public function verifikasi(Request $request, Prestasi $prestasi)
     {
+        // PENTING: "Revisi" WAJIB ada di daftar 'in:' ini, karena tombol
+        // "Minta Revisi" di halaman detail ngirim value 'Revisi'. Kalau cuma
+        // 'Disetujui,Ditolak' doang, submit-nya ditolak validasi tanpa pesan
+        // error yang keliatan di halaman (makanya kelihatan "ngilang" aja).
         $validated = $request->validate([
-            'status' => ['required', 'in:Disetujui,Ditolak'],
+            'status' => ['required', 'in:Disetujui,Ditolak,Revisi'],
             'kategori' => ['required_if:status,Disetujui', 'nullable', 'in:Akademik,Non Akademik,Kejuaraan'],
-            'catatan' => ['required_if:status,Ditolak', 'nullable', 'string', 'max:500'],
+            'catatan' => ['required_if:status,Ditolak,Revisi', 'nullable', 'string', 'max:500'],
         ]);
+
+        // "Revisi" disimpan sebagai status Ditolak + flag perlu_revisi,
+        // supaya statistik/filter status yang udah ada (Belum/Disetujui/Ditolak) gak perlu diubah.
+        $statusDisimpan = $validated['status'] === 'Revisi' ? 'Ditolak' : $validated['status'];
+        $perluRevisi = $validated['status'] === 'Revisi';
 
         $prestasi->update([
             'id_kesiswaan' => auth()->user()->kesiswaan->id_kesiswaan,
-            'status' => $validated['status'],
+            'status' => $statusDisimpan,
+            'perlu_revisi' => $perluRevisi,
             'kategori' => $validated['kategori'] ?? null,
             'catatan' => $validated['catatan'] ?? null,
             'tanggal_verifikasi' => now(),
@@ -92,6 +134,12 @@ class VerifikasiController extends Controller
 
         $prestasi->siswa->user->notify(new StatusVerifikasiNotification($prestasi));
 
-        return back()->with('success', "Prestasi berhasil di-{$validated['status']}.");
+        $pesan = match ($validated['status']) {
+            'Disetujui' => 'Prestasi berhasil disetujui.',
+            'Revisi' => 'Prestasi dikembalikan ke siswa untuk direvisi.',
+            default => 'Prestasi berhasil ditolak.',
+        };
+
+        return redirect()->route('kesiswaan.prestasi.show', $prestasi)->with('success', $pesan);
     }
 }

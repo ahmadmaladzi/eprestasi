@@ -19,7 +19,7 @@
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
                 <x-input-label for="nis" :value="__('NIS')" />
                 <x-text-input id="nis" class="block mt-1 w-full" type="text" name="nis" :value="old('nis')" required />

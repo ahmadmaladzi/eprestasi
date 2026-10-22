@@ -8,17 +8,40 @@ use App\Models\Dokumentasi;
 use App\Models\Prestasi;
 use App\Models\Sertifikat;
 use App\Models\TahunAjaran;
+use App\Models\User;
+use App\Notifications\PrestasiBaruDiajukanNotification;
+use Illuminate\Http\Request;
 
 class PrestasiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $siswa = auth()->user()->siswa;
 
-        $prestasi = $siswa->prestasi()
-            ->with(['tahunAjaran'])
-            ->latest('tanggal')
-            ->paginate(10);
+        $query = $siswa->prestasi()->with(['tahunAjaran']);
+
+        if ($request->filled('search')) {
+            $query->where('nama_prestasi', 'like', '%' . $request->search . '%');
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('sort')) {
+            match ($request->sort) {
+                'terlama' => $query->oldest('tanggal'),
+                'nama_az' => $query->orderBy('nama_prestasi', 'asc'),
+                'nama_za' => $query->orderBy('nama_prestasi', 'desc'),
+                default => $query->latest('tanggal'),
+            };
+        } else {
+            $query->latest('tanggal');
+        }
+
+        // withQueryString() wajib ada biar filter/sort ikut kebawa
+        // pas pindah halaman pagination, bukan ke-reset.
+        $prestasi = $query->paginate(10)->withQueryString();
 
         return view('siswa.prestasi.index', compact('prestasi'));
     }
@@ -59,6 +82,13 @@ class PrestasiController extends Controller
 
         $this->simpanDokumen($request, $prestasi);
 
+        // Beri tahu semua akun kesiswaan bahwa ada pengajuan baru yang perlu diverifikasi
+        $prestasi->load('siswa');
+        $semuaKesiswaan = User::where('role', 'kesiswaan')->get();
+        foreach ($semuaKesiswaan as $kesiswaan) {
+            $kesiswaan->notify(new PrestasiBaruDiajukanNotification($prestasi));
+        }
+
         return redirect()->route('siswa.prestasi.index')
             ->with('success', 'Prestasi berhasil diajukan, menunggu verifikasi kesiswaan.');
     }
@@ -97,6 +127,13 @@ class PrestasiController extends Controller
         // Kalau sebelumnya ditolak & direvisi, ajukan ulang jadi "Belum"
         if ($prestasi->status === 'Ditolak') {
             $prestasi->update(['status' => 'Belum', 'catatan' => null]);
+
+            // Beri tahu kesiswaan juga kalau ada pengajuan yang direvisi & diajukan ulang
+            $prestasi->load('siswa');
+            $semuaKesiswaan = User::where('role', 'kesiswaan')->get();
+            foreach ($semuaKesiswaan as $kesiswaan) {
+                $kesiswaan->notify(new PrestasiBaruDiajukanNotification($prestasi));
+            }
         }
 
         return redirect()->route('siswa.prestasi.index')

@@ -14,7 +14,7 @@ class Prestasi extends Model
 
     protected $fillable = [
         'id_siswa', 'id_ajaran', 'id_kesiswaan', 'nama_prestasi', 'tanggal',
-        'penyelenggara', 'tingkat', 'deskripsi', 'status', 'kategori',
+        'penyelenggara', 'tingkat', 'deskripsi', 'status', 'perlu_revisi', 'kategori',
         'catatan', 'tanggal_verifikasi',
         'terhubung_puspresnas', 'asal', 'jenis_penyelenggara',
     ];
@@ -25,7 +25,19 @@ class Prestasi extends Model
             'tanggal' => 'date',
             'tanggal_verifikasi' => 'datetime',
             'terhubung_puspresnas' => 'boolean',
+            'perlu_revisi' => 'boolean',
         ];
+    }
+
+    // Label status buat ditampilin: "Revisi" kalau ditolak tapi memang minta direvisi,
+    // "Ditolak" kalau ditolak final (perlu_revisi = false).
+    public function getLabelStatusAttribute(): string
+    {
+        if ($this->status === 'Ditolak' && $this->perlu_revisi) {
+            return 'Revisi';
+        }
+
+        return $this->status;
     }
 
     public function siswa()
