@@ -59,6 +59,20 @@ class KelasController extends Controller
         return back()->with('success', 'Status kelas berhasil diubah.');
     }
 
+    public function show(Kelas $kela, Request $request)
+    {
+        $query = $kela->siswa();
+
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', '%' . $request->search . '%')
+                  ->orWhere('nis', 'like', '%' . $request->search . '%');
+        }
+
+        $siswa = $query->orderBy('nama')->paginate(20)->withQueryString();
+
+        return view('admin.kelas.show', compact('kela', 'siswa'));
+    }
+
     public function destroy(Kelas $kela)
     {
         if ($kela->siswa()->count() > 0) {

@@ -58,7 +58,7 @@
                                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#EEF4FF] text-[#2F6FED]">
                                                 <x-icon name="school" :size="14" />
                                             </span>
-                                            <span class="font-medium text-[#0B1E38]">{{ $kelas->nama_kelas }}</span>
+                                            <a href="{{ route('admin.kelas.show', $kelas) }}" class="font-medium text-[#0B1E38] hover:text-[#2F6FED] transition">{{ $kelas->nama_kelas }}</a>
                                         </div>
                                     </td>
                                     <td class="px-5 py-3.5 text-[13px] text-[#64748B]">Kelas {{ $kelas->tingkat }}</td>
@@ -77,6 +77,11 @@
                                     </td>
                                     <td class="px-5 py-3.5">
                                         <div class="flex items-center justify-end gap-1.5">
+                                            <a href="{{ route('admin.kelas.show', $kelas) }}"
+                                               title="Lihat siswa"
+                                               class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#64748B] transition hover:border-[#2F6FED]/30 hover:bg-[#EEF4FF] hover:text-[#2F6FED]">
+                                                <x-icon name="users" :size="14" />
+                                            </a>
                                             <button type="button"
                                                     @click="editOpen = true; editNama = '{{ $kelas->nama_kelas }}'; editTingkat = '{{ $kelas->tingkat }}'; editJurusan = '{{ $kelas->jurusan }}'; editAction = '{{ route('admin.kelas.update', $kelas) }}'"
                                                     title="Edit kelas"

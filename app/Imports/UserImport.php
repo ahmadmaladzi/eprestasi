@@ -77,6 +77,7 @@ class UserImport implements ToCollection, WithHeadingRow
                     'id_user' => $user->id,
                     'nama' => $data['nama'],
                     'nis' => (string) $data['nis'],
+                    'npsn' => '20219175',
                     'kelas' => $data['kelas'],
                     'jurusan' => $data['jurusan'],
                     'email' => $data['email'],

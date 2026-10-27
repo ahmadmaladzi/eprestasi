@@ -86,6 +86,16 @@ class KelulusanController extends Controller
         return back()->with('success', 'Status kelulusan dibatalkan.');
     }
 
+    public function keluarkan(Siswa $siswa)
+    {
+        $siswa->update([
+            'status_kelulusan' => 'Keluar',
+            'npsn' => null,
+        ]);
+
+        return back()->with('success', $siswa->nama . ' berhasil dikeluarkan.');
+    }
+
     // Halaman "Data Alumni": daftar siswa yang sudah Lulus
     public function alumni(Request $request)
     {

@@ -27,11 +27,36 @@
                         <option value="kesiswaan" @selected(request('role') === 'kesiswaan')>Kesiswaan</option>
                         <option value="admin" @selected(request('role') === 'admin')>Admin</option>
                     </select>
+
+                    <select name="kelas"
+                            class="rounded-xl border-[#E2E8F0] py-2 pl-3 pr-8 text-[13px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Semua Kelas</option>
+                        @foreach($kelasOptions as $kls)
+                            <option value="{{ $kls }}" @selected(request('kelas') === $kls)>{{ $kls }}</option>
+                        @endforeach
+                    </select>
+
+                    <select name="status_kelulusan"
+                            class="rounded-xl border-[#E2E8F0] py-2 pl-3 pr-8 text-[13px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="">Semua Status</option>
+                        <option value="Aktif" @selected(request('status_kelulusan') === 'Aktif')>Aktif</option>
+                        <option value="Lulus" @selected(request('status_kelulusan') === 'Lulus')>Lulus</option>
+                        <option value="Keluar" @selected(request('status_kelulusan') === 'Keluar')>Keluar</option>
+                    </select>
+
+                    <select name="per_page"
+                            class="rounded-xl border-[#E2E8F0] py-2 pl-3 pr-8 text-[13px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="15" @selected(request('per_page') == 15)>15 / hlm</option>
+                        <option value="30" @selected(request('per_page') == 30)>30 / hlm</option>
+                        <option value="50" @selected(request('per_page') == 50)>50 / hlm</option>
+                        <option value="100" @selected(request('per_page') == 100)>100 / hlm</option>
+                    </select>
+
                     <button class="inline-flex items-center gap-1.5 rounded-xl bg-[#2F6FED] px-3.5 py-2 text-[13px] font-semibold text-white transition hover:bg-[#1B4FC4]">
                         <x-icon name="filter" :size="14" />
                         Filter
                     </button>
-                    @if(request()->hasAny(['search', 'role']))
+                    @if(request()->hasAny(['search', 'role', 'kelas', 'status_kelulusan', 'per_page']))
                         <a href="{{ route('admin.users.index') }}" class="text-[12px] font-medium text-[#94A3B8] transition hover:text-[#475569]">Reset</a>
                     @endif
                 </form>
@@ -84,12 +109,36 @@
                                         <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#2F6FED] to-[#1B4FC4] text-[10px] font-semibold text-white">
                                             {{ strtoupper(substr($user->nama, 0, 1)) }}
                                         </span>
-                                        <span class="font-medium text-[#0B1E38]">{{ $user->nama }}</span>
+                                        <div>
+                                            <span class="font-medium text-[#0B1E38]">{{ $user->nama }}</span>
+                                            @if($user->role === 'siswa' && $user->siswa)
+                                                <div class="text-[11px] text-[#64748B]">
+                                                    {{ $user->siswa->kelas }} &middot; {{ $user->siswa->jurusan }}
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
                                 <td class="px-5 py-3 text-[13px] text-[#64748B]">{{ $user->email }}</td>
                                 <td class="px-5 py-3">
-                                    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10.5px] font-semibold capitalize {{ $roleBadge }}">{{ $user->role }}</span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[10.5px] font-semibold capitalize {{ $roleBadge }}">{{ $user->role }}</span>
+                                        @if($user->role === 'siswa' && $user->siswa)
+                                            @if($user->siswa->status_kelulusan === 'Aktif')
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-[#ECFDF5] px-2 py-0.5 text-[10px] font-semibold text-[#15803D]">
+                                                    <span class="h-1 w-1 rounded-full bg-[#16A34A]"></span> Aktif
+                                                </span>
+                                            @elseif($user->siswa->status_kelulusan === 'Keluar')
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-[10px] font-semibold text-rose-700">
+                                                    <span class="h-1 w-1 rounded-full bg-rose-500"></span> Keluar
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 rounded-full bg-[#FEF3C7] px-2 py-0.5 text-[10px] font-semibold text-[#92400E]">
+                                                    <span class="h-1 w-1 rounded-full bg-[#F59E0B]"></span> {{ $user->siswa->status_kelulusan }}
+                                                </span>
+                                            @endif
+                                        @endif
+                                    </div>
                                 </td>
                                 <td class="px-5 py-3">
                                     <div class="flex items-center justify-end gap-1.5">
@@ -97,6 +146,13 @@
                                            class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#64748B] transition hover:border-[#2F6FED]/30 hover:bg-[#EEF4FF] hover:text-[#2F6FED]">
                                             <x-icon name="edit" :size="14" />
                                         </a>
+                                        <form method="POST" action="{{ route('admin.users.reset-password', $user) }}" onsubmit="return confirm('Reset password user ini?')">
+                                            @csrf
+                                            <button type="submit" title="Reset Password"
+                                                    class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#64748B] transition hover:border-amber-200 hover:bg-amber-50 hover:text-amber-600">
+                                                <x-icon name="key" :size="14" />
+                                            </button>
+                                        </form>
                                         <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Yakin hapus user ini?')">
                                             @csrf @method('DELETE')
                                             <button type="submit" title="Hapus pengguna"

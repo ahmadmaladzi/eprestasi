@@ -85,6 +85,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     Route::get('/users/import', [UserController::class, 'importForm'])->name('users.import.form');
     Route::post('/users/import', [UserController::class, 'import'])->name('users.import');
+    Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
 
     Route::get('/tahun-ajaran', [TahunAjaranController::class, 'index'])->name('ajaran.index');
     Route::post('/tahun-ajaran', [TahunAjaranController::class, 'store'])->name('ajaran.store');
@@ -92,6 +93,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::delete('/tahun-ajaran/{ajaran}', [TahunAjaranController::class, 'destroy'])->name('ajaran.destroy');
 
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
+    Route::get('/kelas/{kela}', [KelasController::class, 'show'])->name('kelas.show');
     Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
     Route::put('/kelas/{kela}', [KelasController::class, 'update'])->name('kelas.update');
     Route::put('/kelas/{kela}/toggle', [KelasController::class, 'toggleStatus'])->name('kelas.toggle');
@@ -99,6 +101,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/kelulusan', [KelulusanController::class, 'index'])->name('kelulusan.index');
     Route::put('/kelulusan/{siswa}/tandai', [KelulusanController::class, 'tandaiLulus'])->name('kelulusan.tandai');
+    Route::post('/kelulusan/{siswa}/keluarkan', [KelulusanController::class, 'keluarkan'])->name('kelulusan.keluarkan');
     Route::post('/kelulusan/tandai-bulk', [KelulusanController::class, 'tandaiLulusBulk'])->name('kelulusan.tandai-bulk');
     Route::put('/kelulusan/{siswa}/batalkan', [KelulusanController::class, 'batalkanLulus'])->name('kelulusan.batalkan');
     Route::get('/alumni', [KelulusanController::class, 'alumni'])->name('kelulusan.alumni');

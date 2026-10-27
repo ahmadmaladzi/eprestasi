@@ -32,6 +32,12 @@
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
         .reveal { animation:reveal .7s ease both; }
         @keyframes reveal { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+        .fade-in-up { opacity:0; transform:translateY(24px); transition:opacity .6s ease, transform .6s ease; }
+        .fade-in-up.visible { opacity:1; transform:translateY(0); }
+        .stagger-1 { transition-delay:.1s; }
+        .stagger-2 { transition-delay:.2s; }
+        .stagger-3 { transition-delay:.3s; }
+        .stagger-4 { transition-delay:.4s; }
         .section-pad { padding:96px 0; }
         details summary::-webkit-details-marker { display:none; }
         details[open] .plus { transform:rotate(45deg); }
@@ -86,7 +92,7 @@
                 </p>
 
                 <div class="mt-8 flex items-center gap-6 sm:gap-8">
-                    <div><b class="text-2xl font-extrabold text-slate-900">3</b><p class="text-xs text-slate-400 mt-1">Peran pengguna</p></div>
+                    <div><b class="text-2xl font-extrabold text-slate-900 counter" data-target="3">0</b><p class="text-xs text-slate-400 mt-1">Peran pengguna</p></div>
                     <div class="w-px h-9 bg-slate-200"></div>
                     <div><b class="text-2xl font-extrabold text-slate-900">QR</b><p class="text-xs text-slate-400 mt-1">Portofolio publik</p></div>
                     <div class="w-px h-9 bg-slate-200"></div>
@@ -125,7 +131,7 @@
 
 <!-- TRUST -->
 <section class="relative -mt-10 z-20 px-5 sm:px-8">
-    <div class="max-w-6xl mx-auto rounded-3xl bg-white border border-slate-100 card-shadow p-5 sm:p-7 grid md:grid-cols-3 gap-5">
+    <div class="max-w-6xl mx-auto rounded-3xl bg-white border border-slate-100 card-shadow p-5 sm:p-7 grid md:grid-cols-3 gap-5 fade-in-up">
         <div class="flex items-center gap-4 md:border-r border-slate-100 md:pr-5"><span class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">✓</span><div><b class="text-sm">Data terverifikasi</b><p class="text-xs text-slate-400 mt-1">Lebih terpercaya dan rapi</p></div></div>
         <div class="flex items-center gap-4 md:border-r border-slate-100 md:pr-5"><span class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">↗</span><div><b class="text-sm">Portofolio digital</b><p class="text-xs text-slate-400 mt-1">Mudah dibagikan kapan saja</p></div></div>
         <div class="flex items-center gap-4"><span class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">⌁</span><div><b class="text-sm">Tersimpan terpusat</b><p class="text-xs text-slate-400 mt-1">Tidak perlu takut data tercecer</p></div></div>
@@ -151,7 +157,7 @@
                 <div class="absolute -right-12 -top-12 w-48 h-48 rounded-full bg-blue-200/40"></div>
                 <div class="relative rounded-[26px] bg-white p-5 sm:p-7 soft-shadow">
                     <div class="flex items-center justify-between border-b border-slate-100 pb-5"><div><p class="text-[10px] uppercase tracking-widest font-bold text-slate-400">Ringkasan prestasi</p><p class="font-extrabold mt-1">Tahun Ajaran 2026/2027</p></div><span class="px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-bold">Aktif</span></div>
-                    <div class="grid grid-cols-2 gap-3 mt-5"><div class="rounded-2xl bg-blue-50 p-4"><b class="text-2xl text-blue-700">128</b><p class="text-xs text-blue-700/60 mt-1">Prestasi tercatat</p></div><div class="rounded-2xl bg-amber-50 p-4"><b class="text-2xl text-amber-600">74</b><p class="text-xs text-amber-700/60 mt-1">Siswa berprestasi</p></div></div>
+                    <div class="grid grid-cols-2 gap-3 mt-5 fade-in-up"><div class="rounded-2xl bg-blue-50 p-4"><b class="text-2xl text-blue-700 counter" data-target="128">0</b><p class="text-xs text-blue-700/60 mt-1">Prestasi tercatat</p></div><div class="rounded-2xl bg-amber-50 p-4"><b class="text-2xl text-amber-600 counter" data-target="74">0</b><p class="text-xs text-amber-700/60 mt-1">Siswa berprestasi</p></div></div>
                     <div class="mt-4 rounded-2xl border border-slate-100 p-4"><div class="flex justify-between mb-3"><b class="text-xs">Distribusi tingkat</b><span class="text-[10px] text-slate-400">Total 128</span></div><div class="space-y-3"><div class="flex items-center gap-2"><span class="w-14 text-[9px] text-slate-400">Nasional</span><div class="h-2 flex-1 bg-slate-100 rounded-full"><div class="h-full w-[72%] bg-blue-500 rounded-full"></div></div><b class="text-[9px]">72</b></div><div class="flex items-center gap-2"><span class="w-14 text-[9px] text-slate-400">Provinsi</span><div class="h-2 flex-1 bg-slate-100 rounded-full"><div class="h-full w-[48%] bg-cyan-400 rounded-full"></div></div><b class="text-[9px]">31</b></div><div class="flex items-center gap-2"><span class="w-14 text-[9px] text-slate-400">Kota</span><div class="h-2 flex-1 bg-slate-100 rounded-full"><div class="h-full w-[36%] bg-emerald-400 rounded-full"></div></div><b class="text-[9px]">25</b></div></div></div>
                 </div>
             </div>
@@ -164,10 +170,10 @@
     <div class="max-w-7xl mx-auto px-5 sm:px-8">
         <div class="max-w-2xl"><p class="text-xs font-extrabold tracking-[.18em] uppercase text-blue-600">Fitur utama</p><h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-[-.035em]">Semua yang dibutuhkan, <span class="text-blue-600">dalam satu platform.</span></h2><p class="mt-4 text-slate-500 leading-7">Sederhana untuk siswa, terkontrol untuk sekolah, dan mudah dipahami.</p></div>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
-            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition"><div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5">✦</div><b>Catat prestasi</b><p class="text-sm text-slate-400 leading-6 mt-2">Masukkan pencapaian dan bukti tanpa proses yang ribet.</p></div>
-            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition"><div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5">✓</div><b>Verifikasi data</b><p class="text-sm text-slate-400 leading-6 mt-2">Kesiswaan memeriksa data sebelum menjadi prestasi valid.</p></div>
-            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition"><div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-5">▣</div><b>Portofolio QR</b><p class="text-sm text-slate-400 leading-6 mt-2">Satu QR Code untuk membuka rekam jejak siswa.</p></div>
-            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition"><div class="w-12 h-12 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mb-5">◔</div><b>Statistik sekolah</b><p class="text-sm text-slate-400 leading-6 mt-2">Pantau perkembangan prestasi dengan data yang jelas.</p></div>
+            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition fade-in-up stagger-1"><div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-5">✦</div><b>Catat prestasi</b><p class="text-sm text-slate-400 leading-6 mt-2">Masukkan pencapaian dan bukti tanpa proses yang ribet.</p></div>
+            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition fade-in-up stagger-2"><div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-5">✓</div><b>Verifikasi data</b><p class="text-sm text-slate-400 leading-6 mt-2">Kesiswaan memeriksa data sebelum menjadi prestasi valid.</p></div>
+            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition fade-in-up stagger-3"><div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-5">▣</div><b>Portofolio QR</b><p class="text-sm text-slate-400 leading-6 mt-2">Satu QR Code untuk membuka rekam jejak siswa.</p></div>
+            <div class="bg-white rounded-3xl border border-slate-100 p-6 card-shadow hover:-translate-y-1 transition fade-in-up stagger-4"><div class="w-12 h-12 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mb-5">◔</div><b>Statistik sekolah</b><p class="text-sm text-slate-400 leading-6 mt-2">Pantau perkembangan prestasi dengan data yang jelas.</p></div>
         </div>
     </div>
 </section>
@@ -175,11 +181,11 @@
 <!-- ALUR -->
 <section id="alur" class="section-pad max-w-7xl mx-auto px-5 sm:px-8 scroll-mt-10">
     <div class="text-center max-w-2xl mx-auto"><p class="text-xs font-extrabold tracking-[.18em] uppercase text-blue-600">Cara kerja</p><h2 class="mt-3 text-3xl sm:text-4xl font-extrabold tracking-[-.035em]">Dari prestasi menjadi <span class="text-blue-600">rekam jejak.</span></h2><p class="mt-4 text-slate-500 leading-7">Tiga langkah sederhana yang membuat pencapaian lebih teratur.</p></div>
-    <div class="relative grid md:grid-cols-3 gap-8 mt-14">
+    <div class="relative grid md:grid-cols-3 gap-8 mt-14 fade-in-up">
         <div class="hidden md:block absolute top-8 left-[17%] right-[17%] border-t border-dashed border-slate-200"></div>
         <div class="relative text-center"><div class="mx-auto w-16 h-16 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-extrabold shadow-xl">01</div><b class="block mt-6">Ajukan prestasi</b><p class="text-sm text-slate-400 leading-6 mt-2 max-w-xs mx-auto">Lengkapi informasi lomba, tingkat, dan bukti pencapaian.</p></div>
-        <div class="relative text-center"><div class="mx-auto w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-extrabold shadow-xl shadow-blue-600/20">02</div><b class="block mt-6">Verifikasi sekolah</b><p class="text-sm text-slate-400 leading-6 mt-2 max-w-xs mx-auto">Kesiswaan meninjau dan memberikan status verifikasi.</p></div>
-        <div class="relative text-center"><div class="mx-auto w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-extrabold shadow-xl shadow-emerald-500/20">03</div><b class="block mt-6">Bagikan portofolio</b><p class="text-sm text-slate-400 leading-6 mt-2 max-w-xs mx-auto">Profil prestasi dapat dilihat publik melalui QR Code.</p></div>
+        <div class="relative text-center fade-in-up stagger-1"><div class="mx-auto w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center font-extrabold shadow-xl shadow-blue-600/20">02</div><b class="block mt-6">Verifikasi sekolah</b><p class="text-sm text-slate-400 leading-6 mt-2 max-w-xs mx-auto">Kesiswaan meninjau dan memberikan status verifikasi.</p></div>
+        <div class="relative text-center fade-in-up stagger-2"><div class="mx-auto w-16 h-16 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-extrabold shadow-xl shadow-emerald-500/20">03</div><b class="block mt-6">Bagikan portofolio</b><p class="text-sm text-slate-400 leading-6 mt-2 max-w-xs mx-auto">Profil prestasi dapat dilihat publik melalui QR Code.</p></div>
     </div>
 </section>
 
@@ -245,5 +251,49 @@
     </div>
 </footer>
 
-</body>
-</html>
+<script>
+// Scroll-triggered animations
+const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+
+// Counter animation
+function animateCounter(el) {
+  const target = parseInt(el.getAttribute('data-target'));
+  const duration = 2000;
+  const start = Date.now();
+  
+  const animate = () => {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const current = Math.floor(progress * target);
+    el.textContent = current;
+    
+    if (progress < 1) requestAnimationFrame(animate);
+    else el.textContent = target;
+  };
+  
+  animate();
+}
+
+// Trigger counter when visible
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+      entry.target.classList.add('counted');
+      animateCounter(entry.target);
+      counterObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+</script>

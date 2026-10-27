@@ -48,6 +48,12 @@ class PrestasiController extends Controller
 
     public function create()
     {
+        $siswa = auth()->user()->siswa;
+
+        if ($siswa->status_kelulusan === 'Keluar') {
+            return back()->with('error', 'Anda tidak dapat mengajukan prestasi. Akun Anda berstatus Keluar.');
+        }
+
         $ajaranAktif = TahunAjaran::aktif();
 
         if (!$ajaranAktif) {
@@ -104,6 +110,11 @@ class PrestasiController extends Controller
     public function edit(Prestasi $prestasi)
     {
         $this->authorizeSiswa($prestasi);
+        $siswa = auth()->user()->siswa;
+
+        if ($siswa->status_kelulusan === 'Keluar') {
+            return back()->with('error', 'Anda tidak dapat mengedit prestasi. Akun Anda berstatus Keluar.');
+        }
 
         if ($prestasi->status === 'Disetujui') {
             return back()->with('error', 'Prestasi yang sudah disetujui tidak bisa diedit.');

@@ -57,8 +57,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <button type="submit" class="btn-primary"
-                                    onclick="return confirm('Pindahkan siswa yang dicentang ke kelas tujuan?')">
+                            <button type="submit" class="btn-primary">
                                 <x-icon name="arrow-up" :size="14" />
                                 Pindahkan
                             </button>

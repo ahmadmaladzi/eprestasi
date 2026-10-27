@@ -22,14 +22,38 @@ class UserController extends Controller
             $query->where('nama', 'like', '%' . $request->search . '%');
         }
 
-        $users = $query->latest()->paginate(15)->withQueryString();
+        // Filter kelas untuk siswa (join ke tabel siswa)
+        if ($request->filled('kelas')) {
+            $query->whereHas('siswa', function ($q) use ($request) {
+                $q->where('kelas', $request->kelas);
+            });
+        }
+
+        // Filter status kelulusan untuk siswa
+        if ($request->filled('status_kelulusan')) {
+            $query->whereHas('siswa', function ($q) use ($request) {
+                $q->where('status_kelulusan', $request->status_kelulusan);
+            });
+        }
+
+        // Per halaman (dropdown control)
+        $perPage = $request->filled('per_page') ? $request->per_page : 15;
+
+        $users = $query->latest()->paginate($perPage)->withQueryString();
 
         $totalUser = User::count();
         $totalSiswa = User::where('role', 'siswa')->count();
         $totalKesiswaan = User::where('role', 'kesiswaan')->count();
         $totalAdmin = User::where('role', 'admin')->count();
 
-        return view('admin.users.index', compact('users', 'totalUser', 'totalSiswa', 'totalKesiswaan', 'totalAdmin'));
+        // Ambil distinct kelas untuk dropdown filter
+        $kelasOptions = User::where('role', 'siswa')
+            ->join('siswa', 'users.id', '=', 'siswa.id_user')
+            ->distinct('siswa.kelas')
+            ->orderBy('siswa.kelas')
+            ->pluck('siswa.kelas');
+
+        return view('admin.users.index', compact('users', 'totalUser', 'totalSiswa', 'totalKesiswaan', 'totalAdmin', 'kelasOptions'));
     }
 
     public function create()
@@ -163,5 +187,22 @@ class UserController extends Controller
         return back()
             ->with($import->berhasil > 0 ? 'success' : 'error', $pesan)
             ->with('gagalImport', $import->gagal);
+    }
+
+    /**
+     * Reset password user ke nilai default.
+     */
+    public function resetPassword(User $user)
+    {
+        // Password default: tanggal lahir siswa atau NIP untuk kesiswaan/admin
+        $defaultPassword = match($user->role) {
+            'siswa' => $user->siswa?->tanggal_lahir?->format('dmY') ?? '12345678',
+            default => $user->kesiswaan?->nip ?? $user->email,
+        };
+
+        $user->password = bcrypt($defaultPassword);
+        $user->save();
+
+        return back()->with('success', "Password berhasil direset ke: {$defaultPassword}");
     }
 }

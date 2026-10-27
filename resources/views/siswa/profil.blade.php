@@ -199,6 +199,16 @@
                     <div class="rounded-xl border border-[#E8EDF5] bg-[#F8FAFC] px-4 py-3">
                         <p class="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#94A3B8]">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M8 4a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V8a4 4 0 0 1 4-4h8Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                                <path d="M8 12h.01M12 12h.01M16 12h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                            </svg>
+                            NPSN
+                        </p>
+                        <p class="mt-1 text-sm font-medium tabular-nums text-[#0B1E38]">{{ $siswa->npsn ?: '—' }}</p>
+                    </div>
+                    <div class="rounded-xl border border-[#E8EDF5] bg-[#F8FAFC] px-4 py-3">
+                        <p class="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#94A3B8]">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                 <path d="M3 9l9-5 9 5-9 5-9-5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
                                 <path d="M7 11v4.5c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
                             </svg>

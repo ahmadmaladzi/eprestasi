@@ -14,6 +14,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Kelas
+        $this->call(KelasSeeder::class);
+
         // Tahun Ajaran
         $ajaranAktif = TahunAjaran::create(['tahun' => '2025/2026', 'status' => 'Aktif']);
         TahunAjaran::create(['tahun' => '2024/2025', 'status' => 'Tidak Aktif']);
@@ -21,7 +24,7 @@ class DatabaseSeeder extends Seeder
         // Admin
         User::create([
             'nama' => 'Admin E-Prestasi',
-            'email' => 'admin@eprestasi.test',
+            'email' => 'admin@eprestasi.com',
             'role' => 'admin',
             'password' => bcrypt('password'),
         ]);
@@ -29,7 +32,7 @@ class DatabaseSeeder extends Seeder
         // Kesiswaan
         $userKesiswaan = User::create([
             'nama' => 'Budi Santoso, S.Pd',
-            'email' => 'kesiswaan@eprestasi.test',
+            'email' => 'kesiswaan@eprestasi.com',
             'role' => 'kesiswaan',
             'password' => bcrypt('password'),
         ]);
@@ -38,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'nama' => 'Budi Santoso, S.Pd',
             'nip' => '198501012010011001',
             'jabatan' => 'Wakil Kepala Sekolah Bidang Kesiswaan',
-            'email' => 'kesiswaan@eprestasi.test',
+            'email' => 'kesiswaan@eprestasi.com',
         ]);
 
         // Siswa contoh
@@ -55,7 +58,7 @@ class DatabaseSeeder extends Seeder
         foreach ($dataSiswa as $i => $s) {
             $user = User::create([
                 'nama' => $s['nama'],
-                'email' => $i === 0 ? 'siswa@eprestasi.test' : Str::slug($s['nama']) . '@eprestasi.test',
+                'email' => $i === 0 ? 'siswa@eprestasi.com' : Str::slug($s['nama']) . '@eprestasi.com',
                 'role' => 'siswa',
                 'password' => bcrypt('password'),
             ]);

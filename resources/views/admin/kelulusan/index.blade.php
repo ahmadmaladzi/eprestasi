@@ -88,6 +88,7 @@
                                 <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">NIS</th>
                                 <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Kelas</th>
                                 <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Jurusan</th>
+                                <th class="px-5 py-3 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-[#94A3B8]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-[#F1F5F9]">
@@ -110,6 +111,16 @@
                                     <td class="px-5 py-3 text-[13px] text-[#64748B]">{{ $siswa->nis }}</td>
                                     <td class="px-5 py-3 text-[13px] text-[#64748B]">{{ $siswa->kelas }}</td>
                                     <td class="px-5 py-3 text-[13px] text-[#64748B]">{{ $siswa->jurusan }}</td>
+                                    <td class="px-5 py-3">
+                                        <form method="POST" action="{{ route('admin.kelulusan.keluarkan', $siswa) }}" class="inline">
+                                            @csrf
+                                            <button type="button"
+                                                    onclick="confirm('Yakin ingin mengeluarkan {{ addslashes($siswa->nama) }}? NPSN akan dihapus.') ? this.form.submit() : void(0)"
+                                                    class="text-[12px] font-medium text-rose-600 hover:text-rose-700">
+                                                Keluarkan
+                                            </button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
