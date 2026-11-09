@@ -287,9 +287,10 @@
                                 </svg>
                                 Email <span class="text-red-500">*</span>
                             </label>
-                            <input id="email" type="email" name="email" value="{{ old('email', $siswa->email) }}"
+                            <input id="email" type="email" name="email" value="{{ old('email', $siswa->email) }}" required autocomplete="email"
                                    class="block w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm text-[#0B1E38] shadow-sm transition focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20 {{ $errors->has('email') ? 'border-red-300' : 'border-[#E2E8F0]' }}">
                             @error('email') <p class="mt-1.5 text-xs text-red-600">{{ $message }}</p> @enderror
+                            <p class="mt-1.5 text-[11px] leading-relaxed text-[#94A3B8]">Gunakan Gmail aktif. Alamat ini dipakai untuk menerima kode OTP saat lupa password.</p>
                         </div>
                         <div>
                             <label for="no_hp" class="mb-1.5 flex items-center gap-1.5 text-xs font-semibold text-[#64748B]">

@@ -7,57 +7,93 @@ use App\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class NewPasswordController extends Controller
 {
-    /**
-     * Display the password reset view.
-     */
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
-        return view('auth.reset-password', ['request' => $request]);
+        $email = $request->session()->get('password_reset_verified_email');
+        $verifiedAt = $request->session()->get('password_reset_verified_at');
+
+        if (! $email || ! $verifiedAt || now()->timestamp - $verifiedAt > 900) {
+            $request->session()->forget([
+                'password_reset_email',
+                'password_reset_verified_email',
+                'password_reset_verified_at',
+            ]);
+
+            return redirect()->route('password.request')->withErrors([
+                'email' => 'Sesi reset password sudah berakhir. Silakan ulangi dari awal.',
+            ]);
+        }
+
+        return view('auth.reset-password', [
+            'email' => $email,
+        ]);
     }
 
-    /**
-     * Handle an incoming new password request.
-     *
-     * @throws ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'token' => ['required'],
-            'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // Here we will attempt to reset the user's password. If it is successful we
-        // will update the password on an actual user model and persist it to the
-        // database. Otherwise we will parse the error and return the response.
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function (User $user) use ($request) {
-                $user->forceFill([
-                    'password' => Hash::make($request->password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+        $email = $request->session()->get('password_reset_verified_email');
+        $verifiedAt = $request->session()->get('password_reset_verified_at');
 
-                event(new PasswordReset($user));
-            }
+        if (! $email || ! $verifiedAt || now()->timestamp - $verifiedAt > 900) {
+            $request->session()->forget([
+                'password_reset_email',
+                'password_reset_verified_email',
+                'password_reset_verified_at',
+            ]);
+
+            return redirect()->route('password.request')->withErrors([
+                'email' => 'Sesi reset password sudah berakhir. Silakan ulangi dari awal.',
+            ]);
+        }
+
+        $user = User::query()
+            ->whereRaw('LOWER(email) = ?', [strtolower($email)])
+            ->first();
+
+        if (! $user) {
+            $request->session()->forget([
+                'password_reset_email',
+                'password_reset_verified_email',
+                'password_reset_verified_at',
+            ]);
+
+            return redirect()->route('password.request')->withErrors([
+                'email' => 'Akun dengan email tersebut tidak ditemukan.',
+            ]);
+        }
+
+        $user->forceFill([
+            'password' => Hash::make($request->input('password')),
+            'remember_token' => Str::random(60),
+        ])->save();
+
+        DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+        DB::table('sessions')->where('user_id', $user->id)->delete();
+
+        event(new PasswordReset($user));
+
+        $request->session()->forget([
+            'password_reset_email',
+            'password_reset_verified_email',
+            'password_reset_verified_at',
+        ]);
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with(
+            'status',
+            'Password berhasil diubah. Silakan masuk dengan password baru.'
         );
-
-        // If the password was successfully reset, we will redirect the user back to
-        // the application's home authenticated view. If there is an error we can
-        // redirect them back to where they came from with their error message.
-        return $status == Password::PASSWORD_RESET
-                    ? redirect()->route('login')->with('status', __($status))
-                    : back()->withInput($request->only('email'))
-                        ->withErrors(['email' => __($status)]);
     }
 }

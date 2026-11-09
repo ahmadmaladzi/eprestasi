@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Siswa;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -32,7 +33,13 @@ class ProfilController extends Controller
         // nama, nis, kelas, jurusan TIDAK divalidasi/diupdate di sini sama sekali,
         // supaya walaupun ada yang coba kirim data itu lewat request manual, tetap diabaikan.
         $validated = $request->validate([
-            'email' => ['required', 'email', 'unique:siswa,email,' . $siswa->id_siswa . ',id_siswa'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                'unique:siswa,email,'.$siswa->id_siswa.',id_siswa',
+                'unique:users,email,'.auth()->id(),
+            ],
             'no_hp' => ['nullable', 'string', 'max:20'],
             'foto_profil' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
         ]);
@@ -44,11 +51,19 @@ class ProfilController extends Controller
             $validated['foto_profil'] = $request->file('foto_profil')->store('siswa/foto', 'public');
         }
 
-        $siswa->update([
-            'email' => $validated['email'],
-            'no_hp' => $validated['no_hp'] ?? null,
-            'foto_profil' => $validated['foto_profil'] ?? $siswa->foto_profil,
-        ]);
+        DB::transaction(function () use ($siswa, $validated) {
+            $siswa->update([
+                'email' => $validated['email'],
+                'no_hp' => $validated['no_hp'] ?? null,
+                'foto_profil' => $validated['foto_profil'] ?? $siswa->foto_profil,
+            ]);
+
+            // Email akun login harus selalu sama dengan email profil.
+            // Email ini yang dipakai untuk mengirim kode OTP reset password.
+            auth()->user()->update([
+                'email' => $validated['email'],
+            ]);
+        });
 
         return back()->with('success', 'Profil berhasil diperbarui.');
     }

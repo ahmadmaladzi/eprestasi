@@ -47,9 +47,10 @@
                         @error('no_hp') <p class="field-error">{{ $message }}</p> @enderror
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="field-label" for="email">Email</label>
-                        <input id="email" type="email" name="email" value="{{ old('email', $kesiswaan->email) }}" class="input">
+                        <label class="field-label" for="email">Gmail Aktif <span class="text-red-500">*</span></label>
+                        <input id="email" type="email" name="email" value="{{ old('email', $kesiswaan->email) }}" required autocomplete="email" class="input">
                         @error('email') <p class="field-error">{{ $message }}</p> @enderror
+                        <p class="mt-1.5 text-[11px] leading-relaxed text-[#94A3B8]">Alamat ini dipakai untuk login dan menerima kode OTP saat lupa password.</p>
                     </div>
                 </div>
 
