@@ -247,8 +247,7 @@
                                         <path d="M18.4 2.6a2 2 0 0 1 2.8 2.8L12 14.6l-3.6 1 1-3.6 9-9.4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
                                     </svg>
                                 </a>
-                                <form method="POST" action="{{ route('siswa.prestasi.destroy', $item) }}" class="inline"
-                                      onsubmit="return confirm('Yakin hapus prestasi ini?')">
+                                <form method="POST" action="{{ route('siswa.prestasi.destroy', $item) }}" class="inline">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" title="Hapus prestasi" aria-label="Hapus prestasi"

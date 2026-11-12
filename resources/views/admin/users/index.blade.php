@@ -146,14 +146,14 @@
                                            class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#64748B] transition hover:border-[#2F6FED]/30 hover:bg-[#EEF4FF] hover:text-[#2F6FED]">
                                             <x-icon name="edit" :size="14" />
                                         </a>
-                                        <form method="POST" action="{{ route('admin.users.reset-password', $user) }}" onsubmit="return confirm('Reset password user ini?')">
+                                        <form method="POST" action="{{ route('admin.users.reset-password', $user) }}">
                                             @csrf
                                             <button type="submit" title="Reset Password"
                                                     class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#64748B] transition hover:border-amber-200 hover:bg-amber-50 hover:text-amber-600">
                                                 <x-icon name="key" :size="14" />
                                             </button>
                                         </form>
-                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}" onsubmit="return confirm('Yakin hapus user ini?')">
+                                        <form method="POST" action="{{ route('admin.users.destroy', $user) }}">
                                             @csrf @method('DELETE')
                                             <button type="submit" title="Hapus pengguna"
                                                     class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#94A3B8] transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">

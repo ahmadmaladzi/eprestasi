@@ -191,8 +191,7 @@
                             </svg>
                             Edit Prestasi
                         </a>
-                        <form method="POST" action="{{ route('siswa.prestasi.destroy', $prestasi) }}"
-                              onsubmit="return confirm('Yakin hapus prestasi ini? Tindakan ini tidak bisa dibatalkan.')">
+                        <form method="POST" action="{{ route('siswa.prestasi.destroy', $prestasi) }}">
                             @csrf
                             @method('DELETE')
                             <button type="submit"

@@ -95,7 +95,7 @@
                                                     <x-icon :name="$kelas->status === 'Aktif' ? 'x' : 'check'" :size="14" />
                                                 </button>
                                             </form>
-                                            <form method="POST" action="{{ route('admin.kelas.destroy', $kelas) }}" onsubmit="return confirm('Hapus kelas ini?')">
+                                            <form method="POST" action="{{ route('admin.kelas.destroy', $kelas) }}">
                                                 @csrf @method('DELETE')
                                                 <button type="submit" title="Hapus kelas"
                                                         class="flex h-8 w-8 items-center justify-center rounded-lg border border-[#E8EDF5] text-[#94A3B8] transition hover:border-red-200 hover:bg-red-50 hover:text-red-600">

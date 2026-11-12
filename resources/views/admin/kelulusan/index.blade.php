@@ -114,9 +114,7 @@
                                     <td class="px-5 py-3">
                                         <form method="POST" action="{{ route('admin.kelulusan.keluarkan', $siswa) }}" class="inline">
                                             @csrf
-                                            <button type="button"
-                                                    onclick="confirm('Yakin ingin mengeluarkan {{ addslashes($siswa->nama) }}? NPSN akan dihapus.') ? this.form.submit() : void(0)"
-                                                    class="text-[12px] font-medium text-rose-600 hover:text-rose-700">
+                                            <button type="submit" class="text-[12px] font-medium text-rose-600 hover:text-rose-700">
                                                 Keluarkan
                                             </button>
                                         </form>
