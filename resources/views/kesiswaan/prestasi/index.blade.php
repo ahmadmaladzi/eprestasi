@@ -65,19 +65,19 @@
                     </select>
                     <select name="kategori" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
                         <option value="">Semua Kategori</option>
-                        @foreach(['Akademik','Non Akademik','Kejuaraan'] as $k)
-                            <option value="{{ $k }}" @selected(request('kategori') === $k)>{{ $k }}</option>
+                        @foreach(['Akademik' => 'Akademik', 'Non Akademik' => 'Non-Akademik'] as $value => $label)
+                            <option value="{{ $value }}" @selected(request('kategori') === $value)>{{ $label }}</option>
                         @endforeach
                     </select>
                     <select name="asal" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
-                        <option value="">Dalam/Luar Negeri</option>
-                        <option value="Dalam Negeri" @selected(request('asal') === 'Dalam Negeri')>Dalam Negeri</option>
-                        <option value="Luar Negeri" @selected(request('asal') === 'Luar Negeri')>Luar Negeri</option>
+                        <option value="">Lingkup Instansi</option>
+                        <option value="Dalam Negeri" @selected(request('asal') === 'Dalam Negeri')>Dalam Lingkup Kementerian Pendidikan</option>
+                        <option value="Luar Negeri" @selected(request('asal') === 'Luar Negeri')>Di Luar Lingkup Kementerian Pendidikan</option>
                     </select>
                     <select name="jenis_penyelenggara" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
-                        <option value="">Kementerian/Swasta</option>
-                        <option value="Kementerian" @selected(request('jenis_penyelenggara') === 'Kementerian')>Kementerian</option>
-                        <option value="Non Kementerian" @selected(request('jenis_penyelenggara') === 'Non Kementerian')>Non Kementerian</option>
+                        <option value="">Tipe Penyelenggara</option>
+                        <option value="Kementerian" @selected(request('jenis_penyelenggara') === 'Kementerian')>Pemerintah / Negeri</option>
+                        <option value="Non Kementerian" @selected(request('jenis_penyelenggara') === 'Non Kementerian')>Swasta / Yayasan</option>
                     </select>
                     <select name="puspresnas" class="rounded-xl border-[#E2E8F0] py-1.5 pl-3 pr-8 text-[12px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
                         <option value="">Status Puspresnas</option>

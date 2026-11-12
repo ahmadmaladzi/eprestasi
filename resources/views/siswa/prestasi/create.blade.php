@@ -102,18 +102,18 @@
                 <div class="space-y-5 p-5 sm:p-6">
                     <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <div>
-                            <label for="asal" class="mb-1.5 block text-xs font-semibold text-[#64748B]">Asal Kompetisi</label>
+                            <label for="asal" class="mb-1.5 block text-xs font-semibold text-[#64748B]">Lingkup Instansi</label>
                             <select id="asal" name="asal" class="{{ $field }} border-[#E2E8F0]">
-                                <option value="Dalam Negeri" {{ old('asal') == 'Dalam Negeri' ? 'selected' : '' }}>Dalam Negeri</option>
-                                <option value="Luar Negeri" {{ old('asal') == 'Luar Negeri' ? 'selected' : '' }}>Luar Negeri</option>
+                                <option value="Dalam Negeri" {{ old('asal') == 'Dalam Negeri' ? 'selected' : '' }}>Dalam Lingkup Kementerian Pendidikan</option>
+                                <option value="Luar Negeri" {{ old('asal') == 'Luar Negeri' ? 'selected' : '' }}>Di Luar Lingkup Kementerian Pendidikan</option>
                             </select>
                         </div>
                         <div>
-                            <label for="jenis_penyelenggara" class="mb-1.5 block text-xs font-semibold text-[#64748B]">Jenis Penyelenggara</label>
+                            <label for="jenis_penyelenggara" class="mb-1.5 block text-xs font-semibold text-[#64748B]">Tipe Penyelenggara</label>
                             <select id="jenis_penyelenggara" name="jenis_penyelenggara" class="{{ $field }} border-[#E2E8F0]">
                                 <option value="">-- Pilih --</option>
-                                <option value="Kementerian" {{ old('jenis_penyelenggara') == 'Kementerian' ? 'selected' : '' }}>Kementerian (Pemerintah)</option>
-                                <option value="Non Kementerian" {{ old('jenis_penyelenggara') == 'Non Kementerian' ? 'selected' : '' }}>Non Kementerian (Swasta)</option>
+                                <option value="Kementerian" {{ old('jenis_penyelenggara') == 'Kementerian' ? 'selected' : '' }}>Pemerintah / Negeri</option>
+                                <option value="Non Kementerian" {{ old('jenis_penyelenggara') == 'Non Kementerian' ? 'selected' : '' }}>Swasta / Yayasan</option>
                             </select>
                         </div>
                     </div>
