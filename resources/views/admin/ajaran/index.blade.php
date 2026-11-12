@@ -103,28 +103,18 @@
             <aside class="card overflow-hidden">
                 <div class="flex items-start gap-3 border-b border-[#E8EDF5] p-5">
                     <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EEF4FF] text-[#2F6FED]">
-                        <x-icon name="plus" :size="18" />
+                        <x-icon name="info" :size="18" />
                     </span>
                     <div class="min-w-0">
-                        <h2 class="font-display text-sm font-semibold text-[#0B1E38]">Tambah Tahun Ajaran</h2>
-                        <p class="mt-0.5 text-[11.5px] text-[#94A3B8]">Tahun baru otomatis nonaktif.</p>
+                        <h2 class="font-display text-sm font-semibold text-[#0B1E38]">Tahun Ajaran Baru</h2>
+                        <p class="mt-0.5 text-[11.5px] text-[#94A3B8]">Dibuat otomatis via Kenaikan Kelas.</p>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('admin.ajaran.store') }}" class="space-y-4 p-5">
-                    @csrf
-                    <div>
-                        <label class="field-label" for="tahun">Format Tahun</label>
-                        <input id="tahun" type="text" name="tahun" value="{{ old('tahun') }}" placeholder="Contoh: 2026/2027" class="input">
-                        @error('tahun') <p class="field-error">{{ $message }}</p> @enderror
-                    </div>
-                    <p class="rounded-xl bg-[#FFFBEB] px-3 py-2.5 text-[10.5px] leading-relaxed text-[#B45309]">
-                        Aktifkan manual lewat tabel setelah tahun ajaran siap dipakai.
+                <div class="space-y-3 p-5">
+                    <p class="rounded-xl bg-[#ECFDF5] px-3 py-2.5 text-[10.5px] leading-relaxed text-[#15803D]">
+                        Tahun ajaran baru dibuat otomatis saat proses kenaikan kelas. Sesuaikan status (Aktif/Nonaktif) di tabel di atas sesuai kebutuhan.
                     </p>
-                    <button type="submit" class="btn-primary w-full">
-                        <x-icon name="plus" :size="14" />
-                        Tambah
-                    </button>
-                </form>
+                </div>
             </aside>
         </div>
     </div>

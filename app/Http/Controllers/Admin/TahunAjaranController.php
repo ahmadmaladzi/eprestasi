@@ -29,22 +29,7 @@ class TahunAjaranController extends Controller
         return view('admin.ajaran.index', compact('daftarAjaran', 'totalAjaran', 'totalAktif', 'totalPrestasiKeseluruhan'));
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'tahun' => ['required', 'string', 'max:20', 'unique:tahun_ajaran,tahun'],
-            'status' => ['required', 'in:Aktif,Tidak Aktif'],
-        ]);
 
-        // Hanya boleh ada 1 tahun ajaran aktif dalam satu waktu
-        if ($validated['status'] === 'Aktif') {
-            TahunAjaran::where('status', 'Aktif')->update(['status' => 'Tidak Aktif']);
-        }
-
-        TahunAjaran::create($validated);
-
-        return back()->with('success', 'Tahun ajaran berhasil ditambahkan.');
-    }
 
     public function update(Request $request, TahunAjaran $ajaran)
     {

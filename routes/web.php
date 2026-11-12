@@ -88,7 +88,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
 
     Route::get('/tahun-ajaran', [TahunAjaranController::class, 'index'])->name('ajaran.index');
-    Route::post('/tahun-ajaran', [TahunAjaranController::class, 'store'])->name('ajaran.store');
     Route::put('/tahun-ajaran/{ajaran}', [TahunAjaranController::class, 'update'])->name('ajaran.update');
     Route::delete('/tahun-ajaran/{ajaran}', [TahunAjaranController::class, 'destroy'])->name('ajaran.destroy');
 
