@@ -21,7 +21,7 @@
                 <span class="text-xs font-medium text-white/80">Portofolio Terverifikasi Resmi</span>
             </div>
             <h1 class="text-2xl md:text-3xl font-extrabold text-white">{{ $siswa->nama }}</h1>
-            <p class="text-sm text-white/50 mt-1">{{ $siswa->nis }} &middot; {{ $siswa->kelas }} {{ $siswa->jurusan }}</p>
+            <p class="text-sm text-white/50 mt-1">{{ $siswa->npsn ?: '—' }} &middot; {{ $siswa->nis }} &middot; {{ $siswa->kelas }} {{ $siswa->jurusan }}</p>
         </div>
     </div>
 

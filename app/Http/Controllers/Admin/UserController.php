@@ -88,6 +88,7 @@ class UserController extends Controller
                 'id_user' => $user->id,
                 'nama' => $validated['nama'],
                 'nis' => $validated['nis'],
+                'npsn' => '20219175',
                 'kelas' => $validated['kelas'],
                 'jurusan' => $validated['jurusan'],
                 'email' => $validated['email'],

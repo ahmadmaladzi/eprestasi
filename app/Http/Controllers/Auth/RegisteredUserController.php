@@ -28,6 +28,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'nis' => ['required', 'string', 'max:50', 'unique:siswa,nis'],
+            'npsn' => ['required', 'string', 'max:50'],
             'kelas' => ['required', 'string', 'max:20'],
             'jurusan' => ['required', 'string', 'max:50'],
         ]);
@@ -45,6 +46,7 @@ class RegisteredUserController extends Controller
             'id_user' => $user->id,
             'nama' => $validated['nama'],
             'nis' => $validated['nis'],
+            'npsn' => $validated['npsn'],
             'kelas' => $validated['kelas'],
             'jurusan' => $validated['jurusan'],
             'email' => $validated['email'],

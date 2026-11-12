@@ -38,9 +38,11 @@ class StatistikController extends Controller
 
         if (!$tampilkanSemua && $selectedAjaran) {
             $prestasiQuery->where('id_ajaran', $selectedAjaran->id_ajaran);
+            // Untuk tahun ajaran terpilih, hitung siswa aktif (kohort siswa).
+            $siswaQuery->where('status_kelulusan', 'Aktif');
         }
 
-        $totalSiswa = Siswa::count();
+        $totalSiswa = (clone $siswaQuery)->count();
         $totalPrestasi = (clone $prestasiQuery)->count();
         $totalBelum = (clone $prestasiQuery)->where('status', 'Belum')->count();
         $totalDisetujui = (clone $prestasiQuery)->where('status', 'Disetujui')->count();

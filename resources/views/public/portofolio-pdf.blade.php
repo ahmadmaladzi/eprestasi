@@ -40,7 +40,7 @@
     </table>
 
     <h1>Portofolio Prestasi</h1>
-    <p class="sub">{{ $siswa->nama }} &middot; {{ $siswa->nis }} &middot; {{ $siswa->kelas }} {{ $siswa->jurusan }}</p>
+    <p class="sub">{{ $siswa->nama }} &middot; {{ $siswa->npsn ?: '—' }} &middot; {{ $siswa->nis }} &middot; {{ $siswa->kelas }} {{ $siswa->jurusan }}</p>
 
     <table>
         <thead>
