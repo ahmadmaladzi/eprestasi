@@ -40,7 +40,7 @@ class UserImport implements ToCollection, WithHeadingRow
 
             $validator = Validator::make($row->toArray(), [
                 'nama' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'email', 'unique:users,email'],
+                'email' => ['nullable', 'email', 'unique:users,email'],
                 'role' => ['required', 'in:siswa,kesiswaan'],
                 'password' => ['nullable', 'string', 'min:6'],
                 'nis' => ['required_if:role,siswa', 'nullable', 'unique:siswa,nis'],
@@ -62,9 +62,15 @@ class UserImport implements ToCollection, WithHeadingRow
             $data = $validator->validated();
             $password = $data['password'] ?? 'password123';
 
+            // Email opsional: kalau kosong, buat email sementara dari NIS/NIP.
+            // Siswa nanti bisa menggantinya dengan Gmail sendiri lewat menu Profil.
+            $email = isset($data['email'])
+                ? strtolower(trim((string) $data['email']))
+                : $this->emailSementara($data);
+
             $user = User::create([
                 'nama' => $data['nama'],
-                'email' => $data['email'],
+                'email' => $email,
                 'role' => $data['role'],
                 'password' => Hash::make($password),
             ]);
@@ -80,7 +86,7 @@ class UserImport implements ToCollection, WithHeadingRow
                     'npsn' => '20219175',
                     'kelas' => $data['kelas'],
                     'jurusan' => $data['jurusan'],
-                    'email' => $data['email'],
+                    'email' => $email,
                     'no_hp' => isset($data['no_hp']) ? (string) $data['no_hp'] : null,
                     'qr_code' => $qrCode,
                 ]);
@@ -91,11 +97,36 @@ class UserImport implements ToCollection, WithHeadingRow
                     'nip' => (string) $data['nip'],
                     'jabatan' => $data['jabatan'] ?? null,
                     'no_hp' => isset($data['no_hp']) ? (string) $data['no_hp'] : null,
-                    'email' => $data['email'],
+                    'email' => $email,
                 ]);
             }
 
             $this->berhasil++;
         }
+    }
+
+    /**
+     * Buat email sementara ketika kolom email dikosongkan.
+     * Contoh: NIS 2526001 -> 2526001@eprestasi.my.id
+     * Kalau sudah dipakai, tambahkan akhiran angka agar tetap unik.
+     */
+    protected function emailSementara(array $data): string
+    {
+        $dasar = $data['nis'] ?? $data['nip'] ?? null;
+        $dasar = preg_replace('/[^a-z0-9]/', '', strtolower((string) $dasar));
+
+        if ($dasar === '') {
+            $dasar = strtolower(Str::random(8));
+        }
+
+        $email = $dasar.'@eprestasi.my.id';
+        $urut = 2;
+
+        while (User::where('email', $email)->exists()) {
+            $email = $dasar.'-'.$urut.'@eprestasi.my.id';
+            $urut++;
+        }
+
+        return $email;
     }
 }

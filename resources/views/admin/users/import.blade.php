@@ -63,7 +63,6 @@
                 <ul class="mt-3 space-y-2">
                     @foreach([
                         ['nama', 'Nama lengkap pengguna'],
-                        ['email', 'Email unik untuk login'],
                         ['role', 'siswa atau kesiswaan'],
                     ] as [$kolom, $ket])
                         <li class="flex items-start gap-2">
@@ -76,6 +75,7 @@
                     <p><strong class="text-[#64748B]">Siswa:</strong> nis, kelas, jurusan wajib.</p>
                     <p><strong class="text-[#64748B]">Kesiswaan:</strong> nip wajib.</p>
                     <p><strong class="text-[#64748B]">Password:</strong> opsional (default password123).</p>
+                    <p><strong class="text-[#64748B]">Email:</strong> opsional — boleh dikosongkan. Sistem otomatis membuat email dari NIS (contoh: <span class="text-[#2F6FED]">2526001@eprestasi.my.id</span>). Siswa mengisi Gmail sendiri lewat menu Profil.</p>
                 </div>
             </section>
         </aside>
