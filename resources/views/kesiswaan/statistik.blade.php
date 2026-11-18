@@ -77,6 +77,40 @@
             </form>
         </section>
 
+        {{-- EXPORT --}}
+        <section class="card p-4">
+            <form method="GET" action="{{ route('kesiswaan.statistik.export') }}" class="flex flex-wrap items-end gap-3">
+                <input type="hidden" name="tahun_ajaran" value="{{ $tampilkanSemua ? 'semua' : ($selectedAjaran?->id_ajaran ?? '') }}">
+                <input type="hidden" name="jurusan" value="{{ $jurusanDipilih }}">
+
+                <div class="min-w-0 flex-1">
+                    <p class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#2F6FED]">
+                        <x-icon name="download" :size="13" />
+                        Export Data
+                    </p>
+                    <p class="mt-1 text-[11.5px] leading-relaxed text-[#94A3B8]">
+                        Unduh daftar prestasi (.xlsx) sesuai filter di atas — {{ $periodeLabel }}{{ $jurusanDipilih ? ' · '.$jurusanDipilih : ' · Semua Jurusan' }}.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="field-label" for="status_export">Status</label>
+                    <select id="status_export" name="status"
+                            class="rounded-xl border-[#E2E8F0] py-2 pl-3 pr-8 text-[13px] text-[#475569] focus:border-[#2F6FED] focus:ring-2 focus:ring-[#2F6FED]/20">
+                        <option value="Disetujui" selected>Disetujui</option>
+                        <option value="Belum">Belum Diverifikasi</option>
+                        <option value="Ditolak">Ditolak / Revisi</option>
+                        <option value="Semua">Semua Status</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    <x-icon name="download" :size="14" />
+                    Export Excel
+                </button>
+            </form>
+        </section>
+
         {{-- ANGKA --}}
         <div class="grid grid-cols-2 gap-3 xl:grid-cols-4">
             <x-ui.stat-card label="Total Prestasi" :value="$totalPrestasi" icon="trophy" hint="seluruh pengajuan" tone="bg-[#EEF4FF] text-[#2F6FED]" />

@@ -65,6 +65,7 @@ Route::middleware(['auth', 'role:kesiswaan'])->prefix('kesiswaan')->name('kesisw
     Route::get('/dashboard', [KesiswaanDashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/statistik', [KesiswaanStatistikController::class, 'index'])->name('statistik');
+    Route::get('/statistik/export', [KesiswaanStatistikController::class, 'export'])->name('statistik.export');
     Route::get('/profil', [KesiswaanProfilController::class, 'show'])->name('profil');
     Route::put('/profil', [KesiswaanProfilController::class, 'update'])->name('profil.update');
 
