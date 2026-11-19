@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Dashboard' }} — E-Prestasi</title>
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ asset('favicon-32.png') }}" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -93,7 +92,7 @@
             {{-- LOGO --}}
             <div class="flex h-16 shrink-0 items-center gap-2.5 border-b border-[#E8EDF5] px-5">
                 <a href="{{ route('dashboard') }}" class="flex min-w-0 items-center">
-                    <x-brand-logo :size="36" subtitle="SMKN 11 Bandung" subtitle-class="text-[#2F6FED] font-semibold uppercase tracking-[0.16em]" />
+                    <x-brand-logo :size="40" subtitle="SMKN 11 Bandung" subtitle-class="text-[#2F6FED] font-semibold uppercase tracking-[0.16em]" />
                 </a>
                 <button type="button" @click="sidebar = false" aria-label="Tutup menu"
                         class="ml-auto flex h-8 w-8 items-center justify-center rounded-lg text-[#64748B] transition hover:bg-[#F5F7FB] hover:text-[#0B1E38] lg:hidden">

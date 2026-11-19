@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>E-Prestasi</title>
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ asset('favicon-32.png') }}" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +30,7 @@
 
             <div class="relative flex items-center justify-between gap-4 p-8 xl:p-10">
                 <a href="{{ route('home') }}" class="group flex items-center gap-3">
-                    <x-brand-logo :size="40" tone="light" subtitle="Sistem Informasi Prestasi" subtitle-class="text-white/60" class="transition group-hover:-translate-y-0.5" />
+                    <x-brand-logo :size="44" tone="light" subtitle="Sistem Informasi Prestasi" subtitle-class="text-white/60" class="transition group-hover:-translate-y-0.5" />
                 </a>
                 <span class="rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/80 backdrop-blur-sm">SMKN 11 Bandung</span>
             </div>
@@ -94,7 +93,7 @@
                 <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#2F6FED]/[0.12] to-[#F97316]/[0.10]"></div>
                 <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
                     <a href="{{ route('home') }}" class="flex items-center text-white">
-                        <x-brand-logo :size="32" tone="light" />
+                        <x-brand-logo :size="36" tone="light" />
                     </a>
                     <span class="rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] font-semibold text-white/80 backdrop-blur-sm">SMKN 11 Bandung</span>
                 </div>

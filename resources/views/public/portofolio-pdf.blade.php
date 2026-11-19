@@ -29,8 +29,8 @@
 <body>
     <table class="brand-table">
         <tr>
-            <td style="width: 48px;">
-                <img src="{{ public_path('images/logo-eprestasi.png') }}" style="width: 44px; height: 44px;" alt="E-Prestasi">
+            <td style="width: 60px;">
+                <img src="{{ public_path('images/smk11-crest.png') }}" style="width: 56px; height: 56px;" alt="SMK Negeri 11 Bandung">
             </td>
             <td style="padding-left: 10px;">
                 <div class="brand-title">E-Prestasi</div>

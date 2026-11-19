@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>E-Prestasi — Rekam Jejak Prestasi Siswa</title>
     <meta name="description" content="E-Prestasi membantu siswa mencatat, memverifikasi, dan membagikan prestasi secara digital.">
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ asset('favicon-32.png') }}" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,7 +50,7 @@
     <div class="max-w-7xl mx-auto px-5 sm:px-8 pt-5">
         <nav class="flex items-center justify-between rounded-2xl bg-white/90 backdrop-blur-xl border border-slate-200/80 px-4 sm:px-5 py-3 nav-shadow">
             <a href="{{ route('home') }}" class="group flex items-center gap-3">
-                <x-brand-logo :size="40" subtitle="Sistem Prestasi Siswa" subtitle-class="text-slate-400" class="transition group-hover:-translate-y-0.5" />
+                <x-brand-logo :size="44" subtitle="Sistem Prestasi Siswa" subtitle-class="text-slate-400" class="transition group-hover:-translate-y-0.5" />
             </a>
 
             <div class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-500">
@@ -218,7 +217,7 @@
     <div class="relative max-w-7xl mx-auto px-5 sm:px-8 pt-12 pb-6">
         <div class="grid gap-10 md:grid-cols-[1.5fr_.8fr_.8fr]">
             <div class="max-w-md">
-                <x-brand-logo :size="42" tone="light" subtitle="Sistem Informasi Prestasi" subtitle-class="text-slate-500" />
+                <x-brand-logo :size="44" tone="light" subtitle="Sistem Informasi Prestasi" subtitle-class="text-slate-500" />
                 <p class="mt-3 text-sm leading-6 text-slate-400">
                     Sistem prestasi siswa yang membantu pencatatan pencapaian menjadi lebih rapi, terarah, dan mudah diakses.
                 </p>

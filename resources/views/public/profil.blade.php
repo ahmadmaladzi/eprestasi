@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Portofolio - {{ $siswa->nama }}</title>
-    <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="icon" href="{{ asset('favicon-32.png') }}" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +16,7 @@
         <div class="absolute left-1/2 top-0 -translate-x-1/2 w-[500px] h-[300px] bg-[#2F6FED]/20 rounded-full blur-[100px] pointer-events-none"></div>
         <div class="max-w-3xl mx-auto relative">
             <div class="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-full px-3 py-1.5 mb-4">
-                <x-brand-logo variant="mark" :size="18" tone="light" />
+                <x-brand-logo variant="mark" :size="22" tone="light" />
                 <span class="text-xs font-medium text-white/80">Portofolio Terverifikasi Resmi</span>
             </div>
             <h1 class="text-2xl md:text-3xl font-extrabold text-white">{{ $siswa->nama }}</h1>
@@ -116,7 +115,7 @@
         </div>
 
         <div class="flex items-center justify-center gap-2 pb-10 text-xs text-slate-400">
-            <x-brand-logo variant="mark" :size="18" />
+            <x-brand-logo variant="mark" :size="22" />
             <span>Portofolio ini dibagikan melalui sistem E-Prestasi</span>
         </div>
     </div>
